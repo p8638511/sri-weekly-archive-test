@@ -489,10 +489,15 @@ function renderIssues() {
 }
 
 function renderFeaturedPublications() {
+  const latestVolume = weeklyIssues[0]?.volume;
+  const latestArticles = latestVolume
+    ? allArticles.filter((article) => article.volume === latestVolume).sort((a, b) => articleOrder(a.id) - articleOrder(b.id))
+    : [];
+
   renderFeaturedPanel({
     container: latestFeatured,
     status: latestSlideStatus,
-    issues: weeklyIssues,
+    articles: latestArticles,
     slideIndex: state.latestSlide,
     kind: "latest",
   });
@@ -500,45 +505,40 @@ function renderFeaturedPublications() {
   renderFeaturedPanel({
     container: popularFeatured,
     status: popularSlideStatus,
-    issues: getPopularIssues(),
+    articles: getPopularArticles(),
     slideIndex: state.popularSlide,
     kind: "popular",
   });
 }
 
-function renderFeaturedPanel({ container, status, issues, slideIndex, kind }) {
-  const featuredIssues = issues.slice(0, FEATURED_ITEMS_PER_SLIDE * FEATURED_SLIDE_COUNT);
-  const totalSlides = Math.max(1, Math.ceil(featuredIssues.length / FEATURED_ITEMS_PER_SLIDE));
+function renderFeaturedPanel({ container, status, articles, slideIndex, kind }) {
+  const featuredArticles = articles.slice(0, FEATURED_ITEMS_PER_SLIDE * FEATURED_SLIDE_COUNT);
+  const totalSlides = Math.max(1, Math.ceil(featuredArticles.length / FEATURED_ITEMS_PER_SLIDE));
   const normalizedSlide = ((slideIndex % totalSlides) + totalSlides) % totalSlides;
 
   if (kind === "latest") state.latestSlide = normalizedSlide;
   if (kind === "popular") state.popularSlide = normalizedSlide;
 
   const startIndex = normalizedSlide * FEATURED_ITEMS_PER_SLIDE;
-  const visibleIssues = featuredIssues.slice(startIndex, startIndex + FEATURED_ITEMS_PER_SLIDE);
+  const visibleArticles = featuredArticles.slice(startIndex, startIndex + FEATURED_ITEMS_PER_SLIDE);
 
   status.textContent = `${normalizedSlide + 1} / ${totalSlides}`;
-  container.innerHTML = visibleIssues.map(renderFeaturedIssueCard).join("");
+  container.innerHTML = visibleArticles.map(renderFeaturedArticleCard).join("");
 }
 
-function renderFeaturedIssueCard(issue) {
-  const firstTitle = issue.articles[0]?.title || issue.title;
+function renderFeaturedArticleCard(article) {
   return `
     <article class="featured-card">
-      <button class="featured-card-main" type="button" data-open-issue="${issue.volume}" aria-label="SRI Weekly ${issue.volume}호 상세 보기">
-        ${renderMiniCover(issue)}
-        <strong>${firstTitle}</strong>
-        <span>${formatDate(issue.date)}</span>
+      <button class="featured-card-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        ${renderArticleThumbnail(article)}
+        <strong>${article.title}</strong>
+        <span>${article.volume}호 · ${formatDate(article.date)}</span>
       </button>
-      <div class="featured-card-actions">
-        <a href="${issue.pdf}" target="_blank" rel="noreferrer">다운로드</a>
-        <button type="button" data-preview-pdf="${issue.previewPdf || issue.pdf}" data-preview-title="SRI Weekly 제${issue.volume}호">미리보기</button>
-      </div>
     </article>
   `;
 }
 
-function getPopularIssues() {
+function getPopularArticles() {
   const keywordCounts = allArticles
     .flatMap((article) => article.tags)
     .reduce((counts, tag) => {
@@ -546,14 +546,13 @@ function getPopularIssues() {
       return counts;
     }, {});
 
-  return [...weeklyIssues].sort((a, b) => popularScore(b, keywordCounts) - popularScore(a, keywordCounts) || b.volume - a.volume);
+  return [...allArticles].sort(
+    (a, b) => popularArticleScore(b, keywordCounts) - popularArticleScore(a, keywordCounts) || b.date.localeCompare(a.date),
+  );
 }
 
-function popularScore(issue, keywordCounts) {
-  const tagScore = issue.articles
-    .flatMap((article) => article.tags)
-    .reduce((score, tag) => score + (keywordCounts[tag] || 0), 0);
-  return tagScore + issue.articles.length * 3;
+function popularArticleScore(article, keywordCounts) {
+  return article.tags.reduce((score, tag) => score + (keywordCounts[tag] || 0), 0) + (article.summary ? 2 : 0);
 }
 
 function renderPagination(totalPages) {
@@ -665,12 +664,15 @@ function renderCover(issue) {
   `;
 }
 
-function renderMiniCover(issue) {
+function renderArticleThumbnail(article) {
   return `
-    <div class="mini-cover" aria-hidden="true">
-      <img src="./assets/sri-weekly-logo.png" alt="" />
-      <span>No. ${issue.volume}</span>
-      <small>${issue.issueCode}</small>
+    <div class="article-thumbnail" aria-hidden="true">
+      <div class="thumbnail-top">
+        <span>SRI Weekly</span>
+        <small>${article.volume}호 · ${article.issueCode}</small>
+      </div>
+      <strong>${article.title}</strong>
+      <em>${article.topic}</em>
     </div>
   `;
 }
@@ -823,13 +825,6 @@ document.querySelector(".brand").addEventListener("click", () => {
 });
 
 document.querySelector(".featured-publications").addEventListener("click", (event) => {
-  const previewButton = event.target.closest("[data-preview-pdf]");
-  if (previewButton) {
-    event.stopPropagation();
-    openPdfPreview(previewButton.dataset.previewPdf, previewButton.dataset.previewTitle);
-    return;
-  }
-
   const slideButton = event.target.closest("[data-slide-target]");
   if (slideButton) {
     const direction = Number(slideButton.dataset.slideDirection || 0);
@@ -839,11 +834,9 @@ document.querySelector(".featured-publications").addEventListener("click", (even
     return;
   }
 
-  const issueButton = event.target.closest("[data-open-issue]");
-  if (!issueButton) return;
-  state.selectedIssueVolume = Number(issueButton.dataset.openIssue);
-  renderIssues();
-  document.querySelector("#archive").scrollIntoView({ block: "start" });
+  const articleButton = event.target.closest("[data-article-id]");
+  if (!articleButton) return;
+  openArticle(articleButton.dataset.articleId);
 });
 
 pagination.addEventListener("click", (event) => {
