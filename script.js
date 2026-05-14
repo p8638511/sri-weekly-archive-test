@@ -217,10 +217,17 @@ const DATA_SOURCE = {
 let weeklyIssues = fallbackWeeklyIssues;
 let allArticles = buildAllArticles(weeklyIssues);
 
+const ITEMS_PER_PAGE = 5;
+const FEATURED_ITEMS_PER_SLIDE = 3;
+const FEATURED_SLIDE_COUNT = 3;
+
 const state = {
   topic: "전체",
   query: "",
   selectedIssueVolume: null,
+  issuePage: 1,
+  latestSlide: 0,
+  popularSlide: 0,
 };
 
 function buildAllArticles(issues) {
@@ -249,6 +256,11 @@ const pdfPreviewFrame = document.querySelector("#pdfPreviewFrame");
 const pdfPreviewTitle = document.querySelector("#pdfPreviewTitle");
 const pdfPreviewOpen = document.querySelector("#pdfPreviewOpen");
 const pdfPreviewDownload = document.querySelector("#pdfPreviewDownload");
+const latestFeatured = document.querySelector("#latestFeatured");
+const popularFeatured = document.querySelector("#popularFeatured");
+const latestSlideStatus = document.querySelector("#latestSlideStatus");
+const popularSlideStatus = document.querySelector("#popularSlideStatus");
+const pagination = document.querySelector("#pagination");
 
 function unique(items) {
   return [...new Set(items.filter(Boolean))];
@@ -411,6 +423,7 @@ async function initData() {
 
 function renderAll() {
   renderFilters();
+  renderFeaturedPublications();
   renderIssues();
 }
 
@@ -455,17 +468,118 @@ function renderFilters() {
 function renderIssues() {
   if (state.selectedIssueVolume) {
     renderIssueDetail(state.selectedIssueVolume);
+    pagination.innerHTML = "";
     return;
   }
 
   const filteredIssues = weeklyIssues.filter(issueMatches);
+  const totalPages = Math.max(1, Math.ceil(filteredIssues.length / ITEMS_PER_PAGE));
+  state.issuePage = Math.min(Math.max(1, state.issuePage), totalPages);
+  const startIndex = (state.issuePage - 1) * ITEMS_PER_PAGE;
+  const pagedIssues = filteredIssues.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   resultCount.textContent = `${filteredIssues.length}개 호`;
 
-  issueList.innerHTML = filteredIssues.map(renderIssueSummaryCard).join("");
+  issueList.innerHTML = pagedIssues.map(renderIssueSummaryCard).join("");
+  renderPagination(totalPages);
 
   if (!filteredIssues.length) {
     issueList.innerHTML = `<article class="empty-card"><h3>검색 결과가 없습니다</h3></article>`;
+    pagination.innerHTML = "";
   }
+}
+
+function renderFeaturedPublications() {
+  renderFeaturedPanel({
+    container: latestFeatured,
+    status: latestSlideStatus,
+    issues: weeklyIssues,
+    slideIndex: state.latestSlide,
+    kind: "latest",
+  });
+
+  renderFeaturedPanel({
+    container: popularFeatured,
+    status: popularSlideStatus,
+    issues: getPopularIssues(),
+    slideIndex: state.popularSlide,
+    kind: "popular",
+  });
+}
+
+function renderFeaturedPanel({ container, status, issues, slideIndex, kind }) {
+  const featuredIssues = issues.slice(0, FEATURED_ITEMS_PER_SLIDE * FEATURED_SLIDE_COUNT);
+  const totalSlides = Math.max(1, Math.ceil(featuredIssues.length / FEATURED_ITEMS_PER_SLIDE));
+  const normalizedSlide = ((slideIndex % totalSlides) + totalSlides) % totalSlides;
+
+  if (kind === "latest") state.latestSlide = normalizedSlide;
+  if (kind === "popular") state.popularSlide = normalizedSlide;
+
+  const startIndex = normalizedSlide * FEATURED_ITEMS_PER_SLIDE;
+  const visibleIssues = featuredIssues.slice(startIndex, startIndex + FEATURED_ITEMS_PER_SLIDE);
+
+  status.textContent = `${normalizedSlide + 1} / ${totalSlides}`;
+  container.innerHTML = visibleIssues.map(renderFeaturedIssueCard).join("");
+}
+
+function renderFeaturedIssueCard(issue) {
+  const firstTitle = issue.articles[0]?.title || issue.title;
+  return `
+    <article class="featured-card">
+      <button class="featured-card-main" type="button" data-open-issue="${issue.volume}" aria-label="SRI Weekly ${issue.volume}호 상세 보기">
+        ${renderMiniCover(issue)}
+        <strong>${firstTitle}</strong>
+        <span>${formatDate(issue.date)}</span>
+      </button>
+      <div class="featured-card-actions">
+        <a href="${issue.pdf}" target="_blank" rel="noreferrer">다운로드</a>
+        <button type="button" data-preview-pdf="${issue.previewPdf || issue.pdf}" data-preview-title="SRI Weekly 제${issue.volume}호">미리보기</button>
+      </div>
+    </article>
+  `;
+}
+
+function getPopularIssues() {
+  const keywordCounts = allArticles
+    .flatMap((article) => article.tags)
+    .reduce((counts, tag) => {
+      counts[tag] = (counts[tag] || 0) + 1;
+      return counts;
+    }, {});
+
+  return [...weeklyIssues].sort((a, b) => popularScore(b, keywordCounts) - popularScore(a, keywordCounts) || b.volume - a.volume);
+}
+
+function popularScore(issue, keywordCounts) {
+  const tagScore = issue.articles
+    .flatMap((article) => article.tags)
+    .reduce((score, tag) => score + (keywordCounts[tag] || 0), 0);
+  return tagScore + issue.articles.length * 3;
+}
+
+function renderPagination(totalPages) {
+  if (totalPages <= 1) {
+    pagination.innerHTML = "";
+    return;
+  }
+
+  const visibleCount = Math.min(5, totalPages);
+  let startPage = Math.max(1, state.issuePage - Math.floor(visibleCount / 2));
+  const endLimit = startPage + visibleCount - 1;
+  if (endLimit > totalPages) startPage = Math.max(1, totalPages - visibleCount + 1);
+  const pages = Array.from({ length: visibleCount }, (_, index) => startPage + index);
+
+  pagination.innerHTML = `
+    <button type="button" data-page-jump="first" aria-label="첫 페이지">«</button>
+    <button type="button" data-page-jump="prev" aria-label="이전 페이지">‹</button>
+    ${pages
+      .map(
+        (page) =>
+          `<button class="${page === state.issuePage ? "active" : ""}" type="button" data-page="${page}" aria-label="${page}페이지">${page}</button>`,
+      )
+      .join("")}
+    <button type="button" data-page-jump="next" aria-label="다음 페이지">›</button>
+    <button type="button" data-page-jump="last" aria-label="마지막 페이지">»</button>
+  `;
 }
 
 function renderIssueSummaryCard(issue) {
@@ -547,6 +661,16 @@ function renderCover(issue) {
         <strong>${issue.issueCode}</strong>
         <small>${formatDate(issue.date)}</small>
       </div>
+    </div>
+  `;
+}
+
+function renderMiniCover(issue) {
+  return `
+    <div class="mini-cover" aria-hidden="true">
+      <img src="./assets/sri-weekly-logo.png" alt="" />
+      <span>No. ${issue.volume}</span>
+      <small>${issue.issueCode}</small>
     </div>
   `;
 }
@@ -676,6 +800,7 @@ topicFilters.addEventListener("click", (event) => {
   if (!button) return;
   state.topic = button.dataset.topic;
   state.selectedIssueVolume = null;
+  state.issuePage = 1;
   renderFilters();
   renderIssues();
 });
@@ -683,7 +808,65 @@ topicFilters.addEventListener("click", (event) => {
 searchInput.addEventListener("input", (event) => {
   state.query = event.target.value.trim();
   state.selectedIssueVolume = null;
+  state.issuePage = 1;
   renderIssues();
+});
+
+document.querySelector(".brand").addEventListener("click", () => {
+  state.selectedIssueVolume = null;
+  state.issuePage = 1;
+  state.topic = "전체";
+  state.query = "";
+  searchInput.value = "";
+  renderFilters();
+  renderIssues();
+});
+
+document.querySelector(".featured-publications").addEventListener("click", (event) => {
+  const previewButton = event.target.closest("[data-preview-pdf]");
+  if (previewButton) {
+    event.stopPropagation();
+    openPdfPreview(previewButton.dataset.previewPdf, previewButton.dataset.previewTitle);
+    return;
+  }
+
+  const slideButton = event.target.closest("[data-slide-target]");
+  if (slideButton) {
+    const direction = Number(slideButton.dataset.slideDirection || 0);
+    if (slideButton.dataset.slideTarget === "latest") state.latestSlide += direction;
+    if (slideButton.dataset.slideTarget === "popular") state.popularSlide += direction;
+    renderFeaturedPublications();
+    return;
+  }
+
+  const issueButton = event.target.closest("[data-open-issue]");
+  if (!issueButton) return;
+  state.selectedIssueVolume = Number(issueButton.dataset.openIssue);
+  renderIssues();
+  document.querySelector("#archive").scrollIntoView({ block: "start" });
+});
+
+pagination.addEventListener("click", (event) => {
+  const pageButton = event.target.closest("[data-page], [data-page-jump]");
+  if (!pageButton) return;
+
+  const filteredIssues = weeklyIssues.filter(issueMatches);
+  const totalPages = Math.max(1, Math.ceil(filteredIssues.length / ITEMS_PER_PAGE));
+
+  if (pageButton.dataset.page) {
+    state.issuePage = Number(pageButton.dataset.page);
+  } else if (pageButton.dataset.pageJump === "first") {
+    state.issuePage = 1;
+  } else if (pageButton.dataset.pageJump === "prev") {
+    state.issuePage = Math.max(1, state.issuePage - 1);
+  } else if (pageButton.dataset.pageJump === "next") {
+    state.issuePage = Math.min(totalPages, state.issuePage + 1);
+  } else if (pageButton.dataset.pageJump === "last") {
+    state.issuePage = totalPages;
+  }
+
+  renderIssues();
+  document.querySelector("#archive").scrollIntoView({ block: "start" });
 });
 
 issueList.addEventListener("click", (event) => {
@@ -733,12 +916,6 @@ document.querySelector("#closeDialog").addEventListener("click", () => {
 document.querySelector("#closePdfPreview").addEventListener("click", () => {
   pdfPreviewDialog.close();
   pdfPreviewFrame.src = "";
-});
-
-document.querySelector("#openLatestIssue").addEventListener("click", () => {
-  state.selectedIssueVolume = weeklyIssues[0]?.volume || 147;
-  renderIssues();
-  document.querySelector("#archive").scrollIntoView({ block: "start" });
 });
 
 initData();

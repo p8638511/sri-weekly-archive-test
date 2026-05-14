@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SRI Weekly 온라인 아카이브</title>
-    <link rel="stylesheet" href="./styles.css?v=20260509-fix2" />
+    <link rel="stylesheet" href="./styles.css?v=20260514-featured1" />
   </head>
   <body>
     <header class="topbar">
@@ -27,11 +27,33 @@
           <span class="hero-badge">Weekly Issue</span>
           <h1>SRI Weekly</h1>
           <p>SRI Weekly는 수원시정연구원이 매주 발행하는 정책 리포트로, 수원의 주요 현안과 도시 문제에 대한 데이터 기반 분석과 실효성 있는 정책 대안을 시민과 행정가들에게 신속하게 전달합니다.</p>
-          <div class="hero-actions">
-            <a class="primary-action" href="#archive">최신호 보기</a>
-            <button class="ghost-action" id="openLatestIssue" type="button">최신호 수록 글 보기</button>
-          </div>
         </div>
+      </section>
+
+      <section class="featured-publications" aria-label="주요 발간물">
+        <article class="featured-panel">
+          <div class="featured-head">
+            <h2>최신 발간물</h2>
+            <div class="slide-controls">
+              <span id="latestSlideStatus">1 / 1</span>
+              <button type="button" data-slide-target="latest" data-slide-direction="-1" aria-label="최신 발간물 이전">‹</button>
+              <button type="button" data-slide-target="latest" data-slide-direction="1" aria-label="최신 발간물 다음">›</button>
+            </div>
+          </div>
+          <div class="featured-grid" id="latestFeatured"></div>
+        </article>
+
+        <article class="featured-panel featured-panel-soft">
+          <div class="featured-head">
+            <h2>인기 발간물</h2>
+            <div class="slide-controls">
+              <span id="popularSlideStatus">1 / 1</span>
+              <button type="button" data-slide-target="popular" data-slide-direction="-1" aria-label="인기 발간물 이전">‹</button>
+              <button type="button" data-slide-target="popular" data-slide-direction="1" aria-label="인기 발간물 다음">›</button>
+            </div>
+          </div>
+          <div class="featured-grid" id="popularFeatured"></div>
+        </article>
       </section>
 
       <section class="toolbar" id="archive" aria-label="자료 검색과 필터">
@@ -52,6 +74,7 @@
             <p id="resultCount"></p>
           </div>
           <div id="issueList" class="issue-list"></div>
+          <nav id="pagination" class="pagination" aria-label="권호 페이지"></nav>
         </section>
       </section>
 
@@ -90,6 +113,6 @@
       </article>
     </dialog>
 
-    <script src="./script.js?v=20260509-fix2"></script>
+    <script src="./script.js?v=20260514-featured1"></script>
   </body>
 </html>
