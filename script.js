@@ -218,8 +218,7 @@ let weeklyIssues = fallbackWeeklyIssues;
 let allArticles = buildAllArticles(weeklyIssues);
 
 const ITEMS_PER_PAGE = 5;
-const POPULAR_ITEMS_PER_SLIDE = 4;
-const POPULAR_SLIDE_COUNT = 3;
+const RECOMMENDED_ARTICLE_COUNT = 4;
 
 const state = {
   topic: "전체",
@@ -227,7 +226,6 @@ const state = {
   selectedIssueVolume: null,
   issuePage: 1,
   latestSlide: 0,
-  popularSlide: 0,
 };
 
 function buildAllArticles(issues) {
@@ -259,7 +257,6 @@ const pdfPreviewDownload = document.querySelector("#pdfPreviewDownload");
 const latestFeatured = document.querySelector("#latestFeatured");
 const popularFeatured = document.querySelector("#popularFeatured");
 const latestSlideStatus = document.querySelector("#latestSlideStatus");
-const popularSlideStatus = document.querySelector("#popularSlideStatus");
 const pagination = document.querySelector("#pagination");
 
 function unique(items) {
@@ -501,7 +498,7 @@ function renderFeaturedPublications() {
     : [];
 
   renderLatestSpotlight(latestArticles);
-  renderPopularPublications(getPopularArticles());
+  renderRecommendedPublications(getRecommendedArticles());
 }
 
 function renderLatestSpotlight(articles) {
@@ -572,17 +569,11 @@ function renderSpotlightArticle(article) {
   `;
 }
 
-function renderPopularPublications(articles) {
-  const popularArticles = articles.slice(0, POPULAR_ITEMS_PER_SLIDE * POPULAR_SLIDE_COUNT);
-  const totalSlides = Math.max(1, Math.ceil(popularArticles.length / POPULAR_ITEMS_PER_SLIDE));
-  const normalizedSlide = ((state.popularSlide % totalSlides) + totalSlides) % totalSlides;
-  state.popularSlide = normalizedSlide;
-
-  const startIndex = normalizedSlide * POPULAR_ITEMS_PER_SLIDE;
-  const visibleArticles = popularArticles.slice(startIndex, startIndex + POPULAR_ITEMS_PER_SLIDE);
-
-  popularSlideStatus.textContent = `${normalizedSlide + 1} / ${totalSlides}`;
-  popularFeatured.innerHTML = visibleArticles.map(renderPopularArticleCard).join("");
+function renderRecommendedPublications(articles) {
+  const visibleArticles = articles.slice(0, RECOMMENDED_ARTICLE_COUNT);
+  popularFeatured.innerHTML = visibleArticles.length
+    ? visibleArticles.map(renderPopularArticleCard).join("")
+    : `<article class="empty-card"><h3>추천할 과거 발간물이 없습니다</h3></article>`;
 }
 
 function renderPopularArticleCard(article) {
@@ -599,21 +590,33 @@ function renderPopularArticleCard(article) {
   `;
 }
 
-function getPopularArticles() {
-  const keywordCounts = allArticles
-    .flatMap((article) => article.tags)
-    .reduce((counts, tag) => {
-      counts[tag] = (counts[tag] || 0) + 1;
-      return counts;
-    }, {});
+function getRecommendedArticles() {
+  const latestIssue = weeklyIssues[0];
+  if (!latestIssue) return [];
 
-  return [...allArticles].sort(
-    (a, b) => popularArticleScore(b, keywordCounts) - popularArticleScore(a, keywordCounts) || b.date.localeCompare(a.date),
-  );
+  const latestArticles = allArticles.filter((article) => article.volume === latestIssue.volume);
+  const currentTopics = unique(latestArticles.map((article) => article.topic));
+  const currentTags = unique(latestArticles.flatMap((article) => article.tags));
+  const currentText = latestArticles
+    .flatMap((article) => [article.title, article.summary, article.topic, ...article.tags])
+    .join(" ")
+    .toLowerCase();
+
+  return allArticles
+    .filter((article) => article.volume !== latestIssue.volume)
+    .map((article) => ({
+      ...article,
+      score: recommendedArticleScore(article, currentTopics, currentTags, currentText),
+    }))
+    .sort((a, b) => b.score - a.score || b.date.localeCompare(a.date))
+    .slice(0, RECOMMENDED_ARTICLE_COUNT);
 }
 
-function popularArticleScore(article, keywordCounts) {
-  return article.tags.reduce((score, tag) => score + (keywordCounts[tag] || 0), 0) + (article.summary ? 2 : 0);
+function recommendedArticleScore(article, currentTopics, currentTags, currentText) {
+  const sharedTagScore = article.tags.filter((tag) => currentTags.includes(tag)).length * 4;
+  const topicScore = currentTopics.includes(article.topic) ? 3 : 0;
+  const textScore = article.tags.filter((tag) => currentText.includes(tag.toLowerCase())).length;
+  return sharedTagScore + topicScore + textScore;
 }
 
 function renderPagination(totalPages) {
@@ -946,7 +949,6 @@ document.querySelector(".featured-publications").addEventListener("click", (even
   if (slideButton) {
     const direction = Number(slideButton.dataset.slideDirection || 0);
     if (slideButton.dataset.slideTarget === "latest") state.latestSlide += direction;
-    if (slideButton.dataset.slideTarget === "popular") state.popularSlide += direction;
     renderFeaturedPublications();
     return;
   }
