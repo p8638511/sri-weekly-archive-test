@@ -218,8 +218,8 @@ let weeklyIssues = fallbackWeeklyIssues;
 let allArticles = buildAllArticles(weeklyIssues);
 
 const ITEMS_PER_PAGE = 5;
-const FEATURED_ITEMS_PER_SLIDE = 3;
-const FEATURED_SLIDE_COUNT = 3;
+const POPULAR_ITEMS_PER_SLIDE = 4;
+const POPULAR_SLIDE_COUNT = 3;
 
 const state = {
   topic: "전체",
@@ -494,45 +494,67 @@ function renderFeaturedPublications() {
     ? allArticles.filter((article) => article.volume === latestVolume).sort((a, b) => articleOrder(a.id) - articleOrder(b.id))
     : [];
 
-  renderFeaturedPanel({
-    container: latestFeatured,
-    status: latestSlideStatus,
-    articles: latestArticles,
-    slideIndex: state.latestSlide,
-    kind: "latest",
-  });
-
-  renderFeaturedPanel({
-    container: popularFeatured,
-    status: popularSlideStatus,
-    articles: getPopularArticles(),
-    slideIndex: state.popularSlide,
-    kind: "popular",
-  });
+  renderLatestSpotlight(latestArticles);
+  renderPopularPublications(getPopularArticles());
 }
 
-function renderFeaturedPanel({ container, status, articles, slideIndex, kind }) {
-  const featuredArticles = articles.slice(0, FEATURED_ITEMS_PER_SLIDE * FEATURED_SLIDE_COUNT);
-  const totalSlides = Math.max(1, Math.ceil(featuredArticles.length / FEATURED_ITEMS_PER_SLIDE));
-  const normalizedSlide = ((slideIndex % totalSlides) + totalSlides) % totalSlides;
+function renderLatestSpotlight(articles) {
+  const totalSlides = Math.max(1, articles.length);
+  const normalizedSlide = ((state.latestSlide % totalSlides) + totalSlides) % totalSlides;
+  state.latestSlide = normalizedSlide;
+  latestSlideStatus.textContent = `${normalizedSlide + 1} / ${totalSlides}`;
 
-  if (kind === "latest") state.latestSlide = normalizedSlide;
-  if (kind === "popular") state.popularSlide = normalizedSlide;
+  const activeArticle = articles[normalizedSlide];
+  if (!activeArticle) {
+    latestFeatured.innerHTML = `<article class="empty-card"><h3>최신 발간물이 없습니다</h3></article>`;
+    return;
+  }
 
-  const startIndex = normalizedSlide * FEATURED_ITEMS_PER_SLIDE;
-  const visibleArticles = featuredArticles.slice(startIndex, startIndex + FEATURED_ITEMS_PER_SLIDE);
-
-  status.textContent = `${normalizedSlide + 1} / ${totalSlides}`;
-  container.innerHTML = visibleArticles.map(renderFeaturedArticleCard).join("");
+  latestFeatured.innerHTML = `
+    <div class="spotlight-stage">
+      <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="-1" aria-label="최신 발간물 이전">‹</button>
+      ${renderSpotlightArticle(activeArticle)}
+      <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="1" aria-label="최신 발간물 다음">›</button>
+    </div>
+  `;
 }
 
-function renderFeaturedArticleCard(article) {
+function renderSpotlightArticle(article) {
   return `
-    <article class="featured-card">
-      <button class="featured-card-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
-        ${renderArticleThumbnail(article)}
+    <article class="spotlight-card">
+      <button class="spotlight-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        ${renderSpotlightThumbnail(article)}
+        <span class="spotlight-topic">${article.topic}</span>
         <strong>${article.title}</strong>
-        <span>${article.volume}호 · ${formatDate(article.date)}</span>
+        <em>${article.summary}</em>
+        <small>${article.volume}호 · ${formatDate(article.date)}</small>
+      </button>
+    </article>
+  `;
+}
+
+function renderPopularPublications(articles) {
+  const popularArticles = articles.slice(0, POPULAR_ITEMS_PER_SLIDE * POPULAR_SLIDE_COUNT);
+  const totalSlides = Math.max(1, Math.ceil(popularArticles.length / POPULAR_ITEMS_PER_SLIDE));
+  const normalizedSlide = ((state.popularSlide % totalSlides) + totalSlides) % totalSlides;
+  state.popularSlide = normalizedSlide;
+
+  const startIndex = normalizedSlide * POPULAR_ITEMS_PER_SLIDE;
+  const visibleArticles = popularArticles.slice(startIndex, startIndex + POPULAR_ITEMS_PER_SLIDE);
+
+  popularSlideStatus.textContent = `${normalizedSlide + 1} / ${totalSlides}`;
+  popularFeatured.innerHTML = visibleArticles.map(renderPopularArticleCard).join("");
+}
+
+function renderPopularArticleCard(article) {
+  return `
+    <article class="popular-card">
+      <button class="popular-card-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        ${renderPopularThumbnail(article)}
+        <span>${article.topic}</span>
+        <strong>${article.title}</strong>
+        <em>${article.summary}</em>
+        <small>${article.volume}호 · ${formatDate(article.date)}</small>
       </button>
     </article>
   `;
@@ -664,7 +686,20 @@ function renderCover(issue) {
   `;
 }
 
-function renderArticleThumbnail(article) {
+function renderSpotlightThumbnail(article) {
+  return `
+    <div class="spotlight-thumbnail" aria-hidden="true">
+      <div class="thumbnail-top">
+        <span>SRI Weekly</span>
+        <small>${article.volume}호 · ${article.issueCode}</small>
+      </div>
+      <strong>${article.title}</strong>
+      <em>${article.topic}</em>
+    </div>
+  `;
+}
+
+function renderPopularThumbnail(article) {
   return `
     <div class="article-thumbnail" aria-hidden="true">
       <div class="thumbnail-top">
