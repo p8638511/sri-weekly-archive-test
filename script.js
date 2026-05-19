@@ -510,11 +510,44 @@ function renderLatestSpotlight(articles) {
     return;
   }
 
+  const previousArticle = articles[(normalizedSlide - 1 + totalSlides) % totalSlides];
+  const nextArticle = articles[(normalizedSlide + 1) % totalSlides];
+
   latestFeatured.innerHTML = `
     <div class="spotlight-stage">
-      <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="-1" aria-label="최신 발간물 이전">‹</button>
+      ${renderSpotlightSideArticle(previousArticle, "prev", totalSlides > 1)}
       ${renderSpotlightArticle(activeArticle)}
-      <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="1" aria-label="최신 발간물 다음">›</button>
+      ${renderSpotlightSideArticle(nextArticle, "next", totalSlides > 1)}
+      ${
+        totalSlides > 1
+          ? `<div class="spotlight-mobile-controls">
+              <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="-1" aria-label="최신 발간물 이전">‹</button>
+              <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="1" aria-label="최신 발간물 다음">›</button>
+            </div>`
+          : ""
+      }
+    </div>
+  `;
+}
+
+function renderSpotlightSideArticle(article, direction, isVisible) {
+  if (!article || !isVisible) {
+    return `<div class="spotlight-side" aria-hidden="true"></div>`;
+  }
+
+  const directionValue = direction === "prev" ? -1 : 1;
+  const label = direction === "prev" ? "최신 발간물 이전" : "최신 발간물 다음";
+
+  return `
+    <div class="spotlight-side spotlight-side-${direction}">
+      <button class="spotlight-side-card" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        ${renderSpotlightThumbnail(article, "side")}
+        <span>${article.topic}</span>
+        <strong>${article.title}</strong>
+        <em>${article.summary}</em>
+        <small>${article.volume}호 · ${formatDate(article.date)}</small>
+      </button>
+      <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="${directionValue}" aria-label="${label}">${direction === "prev" ? "‹" : "›"}</button>
     </div>
   `;
 }
@@ -523,7 +556,7 @@ function renderSpotlightArticle(article) {
   return `
     <article class="spotlight-card">
       <button class="spotlight-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
-        ${renderSpotlightThumbnail(article)}
+        ${renderSpotlightThumbnail(article, "main")}
         <span class="spotlight-topic">${article.topic}</span>
         <strong>${article.title}</strong>
         <em>${article.summary}</em>
@@ -686,28 +719,57 @@ function renderCover(issue) {
   `;
 }
 
-function renderSpotlightThumbnail(article) {
+function getThumbnailTheme(article) {
+  const source = [article.title, article.summary, article.topic, ...(article.tags || [])].join(" ").toLowerCase();
+
+  if (/관광|문화|콘텐츠|k-콘텐츠|수원화성|방문|체류/.test(source)) {
+    return { className: "theme-culture", label: "문화관광", icon: "C" };
+  }
+  if (/반도체|r&d|첨단|산업|창업|경제|기술|제조/.test(source)) {
+    return { className: "theme-industry", label: "산업경제", icon: "R&D" };
+  }
+  if (/복지|돌봄|노인|청소년|주거|공동주택|생활/.test(source)) {
+    return { className: "theme-welfare", label: "생활복지", icon: "W" };
+  }
+  if (/교통|버스|주차|역세권|환승|이동|보행|도로/.test(source)) {
+    return { className: "theme-transport", label: "교통도시", icon: "M" };
+  }
+  if (/환경|탄소|폭염|기후|에너지|재생|냉방|미세먼지/.test(source)) {
+    return { className: "theme-climate", label: "기후환경", icon: "E" };
+  }
+  if (/행정|재정|법|특례|의회|정부|자치|교육/.test(source)) {
+    return { className: "theme-admin", label: "행정정책", icon: "A" };
+  }
+
+  return { className: "theme-city", label: article.topic || "도시정책", icon: "SRI" };
+}
+
+function renderSpotlightThumbnail(article, size = "main") {
+  const theme = getThumbnailTheme(article);
   return `
-    <div class="spotlight-thumbnail" aria-hidden="true">
-      <div class="thumbnail-top">
-        <span>SRI Weekly</span>
-        <small>${article.volume}호 · ${article.issueCode}</small>
-      </div>
-      <strong>${article.title}</strong>
-      <em>${article.topic}</em>
+    <div class="content-visual spotlight-thumbnail ${size === "side" ? "side-thumbnail" : ""} ${theme.className}" aria-hidden="true">
+      <span class="visual-series">SRI Weekly</span>
+      <span class="visual-code">${article.volume}호 · ${article.issueCode}</span>
+      <span class="visual-shape visual-shape-one"></span>
+      <span class="visual-shape visual-shape-two"></span>
+      <span class="visual-grid"></span>
+      <span class="visual-icon">${theme.icon}</span>
+      <span class="visual-label">${theme.label}</span>
     </div>
   `;
 }
 
 function renderPopularThumbnail(article) {
+  const theme = getThumbnailTheme(article);
   return `
-    <div class="article-thumbnail" aria-hidden="true">
-      <div class="thumbnail-top">
-        <span>SRI Weekly</span>
-        <small>${article.volume}호 · ${article.issueCode}</small>
-      </div>
-      <strong>${article.title}</strong>
-      <em>${article.topic}</em>
+    <div class="content-visual article-thumbnail ${theme.className}" aria-hidden="true">
+      <span class="visual-series">SRI Weekly</span>
+      <span class="visual-code">${article.volume}호</span>
+      <span class="visual-shape visual-shape-one"></span>
+      <span class="visual-shape visual-shape-two"></span>
+      <span class="visual-grid"></span>
+      <span class="visual-icon">${theme.icon}</span>
+      <span class="visual-label">${theme.label}</span>
     </div>
   `;
 }
