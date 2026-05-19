@@ -472,20 +472,26 @@ function renderIssues() {
     return;
   }
 
-  const filteredIssues = weeklyIssues.filter(issueMatches);
-  const totalPages = Math.max(1, Math.ceil(filteredIssues.length / ITEMS_PER_PAGE));
+  const filteredArticles = getFilteredArticles();
+  const totalPages = Math.max(1, Math.ceil(filteredArticles.length / ITEMS_PER_PAGE));
   state.issuePage = Math.min(Math.max(1, state.issuePage), totalPages);
   const startIndex = (state.issuePage - 1) * ITEMS_PER_PAGE;
-  const pagedIssues = filteredIssues.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  resultCount.textContent = `${filteredIssues.length}개 호`;
+  const pagedArticles = filteredArticles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  resultCount.textContent = `${filteredArticles.length}개 글`;
 
-  issueList.innerHTML = pagedIssues.map(renderIssueSummaryCard).join("");
+  issueList.innerHTML = pagedArticles.map((article, index) => renderArchiveArticleItem(article, startIndex + index)).join("");
   renderPagination(totalPages);
 
-  if (!filteredIssues.length) {
+  if (!filteredArticles.length) {
     issueList.innerHTML = `<article class="empty-card"><h3>검색 결과가 없습니다</h3></article>`;
     pagination.innerHTML = "";
   }
+}
+
+function getFilteredArticles() {
+  return allArticles
+    .filter(matchesArticle)
+    .sort((a, b) => b.date.localeCompare(a.date) || b.volume - a.volume || articleOrder(a.id) - articleOrder(b.id));
 }
 
 function renderFeaturedPublications() {
@@ -658,6 +664,20 @@ function renderIssueSummaryCard(issue) {
         <button class="outline-action" type="button" data-preview-pdf="${issue.previewPdf || issue.pdf}" data-preview-title="SRI Weekly 제${issue.volume}호">미리보기</button>
       </div>
     </article>
+  `;
+}
+
+function renderArchiveArticleItem(article, index) {
+  return `
+    <button class="paper-item archive-article-item" type="button" data-article-id="${article.id}">
+      <span class="paper-number">${String(index + 1).padStart(2, "0")}</span>
+      <span class="archive-article-body">
+        <span class="issue-badge">SRI Weekly ${article.volume}호 · ${article.issueCode} · ${formatDate(article.date)}</span>
+        <strong>${article.title}</strong>
+        <em>${article.summary}</em>
+        <span class="article-tags">${article.tags.slice(0, 6).map((tag) => `<span>${tag}</span>`).join("")}</span>
+      </span>
+    </button>
   `;
 }
 
@@ -940,8 +960,7 @@ pagination.addEventListener("click", (event) => {
   const pageButton = event.target.closest("[data-page], [data-page-jump]");
   if (!pageButton) return;
 
-  const filteredIssues = weeklyIssues.filter(issueMatches);
-  const totalPages = Math.max(1, Math.ceil(filteredIssues.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(getFilteredArticles().length / ITEMS_PER_PAGE));
 
   if (pageButton.dataset.page) {
     state.issuePage = Number(pageButton.dataset.page);

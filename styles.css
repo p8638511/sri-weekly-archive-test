@@ -1125,6 +1125,35 @@ input {
   text-align: left;
 }
 
+.archive-article-item {
+  min-height: 150px;
+  padding: 24px;
+  background: #fbfdff;
+}
+
+.archive-article-item:hover {
+  border-color: #c4d8ea;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(25, 42, 64, 0.06);
+}
+
+.archive-article-body {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.issue-badge {
+  display: inline-flex;
+  justify-self: start;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #eef5ff;
+  color: #2456a6;
+  font-size: 13px;
+  font-weight: 900;
+}
+
 .paper-number {
   display: grid;
   place-items: center;
@@ -1147,11 +1176,21 @@ input {
   line-height: 1.35;
 }
 
+.archive-article-item strong {
+  font-size: 22px;
+}
+
 .paper-item em {
   margin-top: 6px;
   color: var(--muted);
   font-style: normal;
   line-height: 1.6;
+}
+
+.archive-article-item em {
+  margin-top: 0;
+  font-size: 17px;
+  word-break: keep-all;
 }
 
 .empty-card {
