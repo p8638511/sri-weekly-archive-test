@@ -226,6 +226,7 @@ const state = {
   selectedIssueVolume: null,
   issuePage: 1,
   latestSlide: 0,
+  latestSlideDirection: 0,
 };
 
 function buildAllArticles(issues) {
@@ -517,7 +518,7 @@ function renderLatestSpotlight(articles) {
   const nextArticle = articles[(normalizedSlide + 1) % totalSlides];
 
   latestFeatured.innerHTML = `
-    <div class="spotlight-stage">
+    <div class="spotlight-stage ${state.latestSlideDirection > 0 ? "slide-next" : state.latestSlideDirection < 0 ? "slide-prev" : ""}">
       ${renderSpotlightSideArticle(previousArticle, "prev", totalSlides > 1)}
       ${renderSpotlightArticle(activeArticle)}
       ${renderSpotlightSideArticle(nextArticle, "next", totalSlides > 1)}
@@ -948,7 +949,10 @@ document.querySelector(".featured-publications").addEventListener("click", (even
   const slideButton = event.target.closest("[data-slide-target]");
   if (slideButton) {
     const direction = Number(slideButton.dataset.slideDirection || 0);
-    if (slideButton.dataset.slideTarget === "latest") state.latestSlide += direction;
+    if (slideButton.dataset.slideTarget === "latest") {
+      state.latestSlideDirection = direction;
+      state.latestSlide += direction;
+    }
     renderFeaturedPublications();
     return;
   }

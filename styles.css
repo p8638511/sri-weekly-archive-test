@@ -294,6 +294,27 @@ input {
   min-width: 0;
 }
 
+.slide-next .spotlight-card {
+  animation: spotlightCenterFromRight 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-prev .spotlight-card {
+  animation: spotlightCenterFromLeft 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-next .spotlight-side-prev,
+.slide-prev .spotlight-side-next {
+  animation: spotlightSideFade 0.46s ease both;
+}
+
+.slide-next .spotlight-side-next {
+  animation: spotlightSideFromRight 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-prev .spotlight-side-prev {
+  animation: spotlightSideFromLeft 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .spotlight-main,
 .popular-card-main {
   display: grid;
@@ -422,6 +443,72 @@ input {
 
 .spotlight-arrow:hover {
   background: rgba(22, 131, 111, 0.84);
+}
+
+@keyframes spotlightCenterFromRight {
+  from {
+    opacity: 0.35;
+    transform: translateX(64px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes spotlightCenterFromLeft {
+  from {
+    opacity: 0.35;
+    transform: translateX(-64px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes spotlightSideFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(42px);
+  }
+  to {
+    opacity: 0.72;
+    transform: translateX(0);
+  }
+}
+
+@keyframes spotlightSideFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-42px);
+  }
+  to {
+    opacity: 0.72;
+    transform: translateX(0);
+  }
+}
+
+@keyframes spotlightSideFade {
+  from {
+    opacity: 0.2;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-next .spotlight-card,
+  .slide-prev .spotlight-card,
+  .slide-next .spotlight-side-prev,
+  .slide-prev .spotlight-side-next,
+  .slide-next .spotlight-side-next,
+  .slide-prev .spotlight-side-prev {
+    animation: none;
+  }
 }
 
 .content-visual {
