@@ -295,24 +295,24 @@ input {
 }
 
 .slide-next .spotlight-card {
-  animation: spotlightCenterFromRight 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: spotlightCenterFromRight 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .slide-prev .spotlight-card {
-  animation: spotlightCenterFromLeft 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: spotlightCenterFromLeft 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .slide-next .spotlight-side-prev,
 .slide-prev .spotlight-side-next {
-  animation: spotlightSideFade 0.46s ease both;
+  animation: spotlightSideFade 1.5s ease both;
 }
 
 .slide-next .spotlight-side-next {
-  animation: spotlightSideFromRight 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: spotlightSideFromRight 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .slide-prev .spotlight-side-prev {
-  animation: spotlightSideFromLeft 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: spotlightSideFromLeft 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .spotlight-main,
