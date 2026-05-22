@@ -102,17 +102,36 @@ input {
   text-decoration: none;
 }
 
-.homepage-link span {
+.home-icon {
   display: inline-grid;
   place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #edf7f0;
+}
+
+.home-icon svg {
   width: 22px;
-  height: 16px;
-  border-radius: 4px;
-  background: #e92d2d;
-  color: white;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 0;
+  height: 22px;
+  overflow: visible;
+}
+
+.home-icon path {
+  fill: none;
+  stroke: #2b2f32;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3.2;
+}
+
+.home-icon .home-icon-roof {
+  stroke: #98d8ac;
+  stroke-width: 4.8;
+}
+
+.home-icon .home-icon-door {
+  fill: #dfe8e2;
 }
 
 .homepage-link:hover {
