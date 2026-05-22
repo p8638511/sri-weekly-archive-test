@@ -105,33 +105,22 @@ input {
 .home-icon {
   display: inline-grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  background: #edf7f0;
+  width: 24px;
+  height: 24px;
 }
 
 .home-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 23px;
+  height: 23px;
   overflow: visible;
 }
 
 .home-icon path {
   fill: none;
-  stroke: #2b2f32;
+  stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 3.2;
-}
-
-.home-icon .home-icon-roof {
-  stroke: #98d8ac;
-  stroke-width: 4.8;
-}
-
-.home-icon .home-icon-door {
-  fill: #dfe8e2;
+  stroke-width: 2.8;
 }
 
 .homepage-link:hover {
