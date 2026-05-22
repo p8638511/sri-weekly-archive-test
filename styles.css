@@ -676,18 +676,16 @@ input {
   font-size: 14px;
 }
 
-.theme-culture {
-  background: linear-gradient(135deg, #eb7b4a 0%, #f0b35d 52%, #cf5f57 100%);
-}
-
+.theme-economy,
 .theme-industry {
   background: linear-gradient(135deg, #14366f 0%, #235aa6 45%, #42bfd0 100%);
 }
 
 .theme-welfare {
-  background: linear-gradient(135deg, #4d7f67 0%, #91be8d 48%, #d8df9c 100%);
+  background: linear-gradient(135deg, #744b86 0%, #b66fa6 48%, #f0c0d5 100%);
 }
 
+.theme-safety,
 .theme-transport {
   background: linear-gradient(135deg, #284e96 0%, #5579be 48%, #84cce2 100%);
 }
@@ -700,8 +698,17 @@ input {
   background: linear-gradient(135deg, #344054 0%, #5f718b 50%, #b6c5d6 100%);
 }
 
+.theme-urban,
 .theme-city {
   background: linear-gradient(135deg, #006f5d 0%, #16836f 50%, #83c5a4 100%);
+}
+
+.theme-culture {
+  background: linear-gradient(135deg, #eb7b4a 0%, #f0b35d 52%, #cf5f57 100%);
+}
+
+.theme-civic {
+  background: linear-gradient(135deg, #475467 0%, #6f8db7 48%, #c6d7ea 100%);
 }
 
 .spotlight-topic {

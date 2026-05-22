@@ -219,6 +219,17 @@ let allArticles = buildAllArticles(weeklyIssues);
 
 const ITEMS_PER_PAGE = 5;
 const RECOMMENDED_ARTICLE_COUNT = 4;
+const TOPIC_ORDER = ["경제·산업", "행정·재정", "복지·여성", "안전·교통", "도시·개발", "환경", "문화·청년", "시민·교육"];
+const TOPIC_THEMES = {
+  "경제·산업": { className: "theme-economy", label: "경제·산업", icon: "E" },
+  "행정·재정": { className: "theme-admin", label: "행정·재정", icon: "A" },
+  "복지·여성": { className: "theme-welfare", label: "복지·여성", icon: "W" },
+  "안전·교통": { className: "theme-safety", label: "안전·교통", icon: "S" },
+  "도시·개발": { className: "theme-urban", label: "도시·개발", icon: "U" },
+  환경: { className: "theme-climate", label: "환경", icon: "N" },
+  "문화·청년": { className: "theme-culture", label: "문화·청년", icon: "C" },
+  "시민·교육": { className: "theme-civic", label: "시민·교육", icon: "P" },
+};
 
 const state = {
   topic: "전체",
@@ -233,6 +244,7 @@ function buildAllArticles(issues) {
   return issues.flatMap((issue) =>
     issue.articles.map((article) => ({
       ...article,
+      topic: normalizeTopic(article.topic, article),
       volume: issue.volume,
       issueCode: issue.issueCode,
       date: issue.date,
@@ -335,7 +347,7 @@ async function loadWeeklyIssuesFromSheets() {
         type: row.article_type || "정책동향",
         title: row.article_title,
         author: row.author || "수원시정연구원",
-        topic: row.topic || "기타",
+        topic: normalizeTopic(row.topic, row),
         tags: splitList(row.keywords),
         summary: row.summary || "요약 정보는 준비 중입니다.",
         body: row.body || row.summary || "본문 요약은 준비 중입니다.",
@@ -353,7 +365,7 @@ async function loadWeeklyIssuesFromSheets() {
       const topics = unique([
         ...splitList(row.topics),
         ...articles.map((article) => article.topic),
-      ]).slice(0, 6);
+      ].map((topic) => normalizeTopic(topic, row))).slice(0, 6);
 
       return {
         volume,
@@ -381,6 +393,34 @@ function splitList(value) {
     .split(/[,#、/|]/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function normalizeTopic(topic, item = {}) {
+  const rawTopic = String(topic || "").trim();
+  if (TOPIC_ORDER.includes(rawTopic)) return rawTopic;
+
+  const source = [
+    rawTopic,
+    item.article_title,
+    item.title,
+    item.summary,
+    item.body,
+    item.keywords,
+    ...(item.tags || []),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  if (/산업경제|지역경제|경제|산업|반도체|r&d|첨단|창업|기술|제조|기업|일자리/.test(source)) return "경제·산업";
+  if (/행정|재정|법|특례|의회|정부|자치|규제|예산|사무이양/.test(source)) return "행정·재정";
+  if (/복지|여성|돌봄|노인|청소년|아동|주거복지|가족|취약계층/.test(source)) return "복지·여성";
+  if (/안전|교통|버스|주차|재난|침수|화재|범죄|보행|도로|폭염/.test(source)) return "안전·교통";
+  if (/도시공간|도시|개발|역세권|복합개발|재개발|공동주택|생활권|공간/.test(source)) return "도시·개발";
+  if (/환경|탄소|기후|에너지|재생|냉방|미세먼지|녹색|자원/.test(source)) return "환경";
+  if (/문화|관광|청년|콘텐츠|k-콘텐츠|수원화성|방문|체류|축제|예술/.test(source)) return "문화·청년";
+  if (/시민|교육|학교|참여|거버넌스|공론|주민|재정교육|평생교육/.test(source)) return "시민·교육";
+
+  return rawTopic || "시민·교육";
 }
 
 function articleOrder(id) {
@@ -454,7 +494,7 @@ function issueMatches(issue) {
 }
 
 function renderFilters() {
-  const topics = ["전체", ...unique(allArticles.map((article) => article.topic))];
+  const topics = ["전체", ...TOPIC_ORDER];
   topicFilters.innerHTML = topics
     .map(
       (topic) =>
@@ -615,9 +655,22 @@ function getRecommendedArticles() {
 
 function recommendedArticleScore(article, currentTopics, currentTags, currentText) {
   const sharedTagScore = article.tags.filter((tag) => currentTags.includes(tag)).length * 4;
-  const topicScore = currentTopics.includes(article.topic) ? 3 : 0;
+  const topicScore = currentTopics.includes(article.topic) ? 5 : 0;
+  const relatedTopicScore = currentTopics.some((topic) => areTopicsRelated(topic, article.topic)) ? 2 : 0;
   const textScore = article.tags.filter((tag) => currentText.includes(tag.toLowerCase())).length;
-  return sharedTagScore + topicScore + textScore;
+  return sharedTagScore + topicScore + relatedTopicScore + textScore;
+}
+
+function areTopicsRelated(baseTopic, candidateTopic) {
+  if (baseTopic === candidateTopic) return true;
+  const groups = [
+    ["경제·산업", "도시·개발", "문화·청년"],
+    ["행정·재정", "시민·교육"],
+    ["복지·여성", "시민·교육", "안전·교통"],
+    ["안전·교통", "도시·개발", "환경"],
+    ["환경", "도시·개발", "안전·교통"],
+  ];
+  return groups.some((group) => group.includes(baseTopic) && group.includes(candidateTopic));
 }
 
 function renderPagination(totalPages) {
@@ -744,28 +797,8 @@ function renderCover(issue) {
 }
 
 function getThumbnailTheme(article) {
-  const source = [article.title, article.summary, article.topic, ...(article.tags || [])].join(" ").toLowerCase();
-
-  if (/관광|문화|콘텐츠|k-콘텐츠|수원화성|방문|체류/.test(source)) {
-    return { className: "theme-culture", label: "문화관광", icon: "C" };
-  }
-  if (/반도체|r&d|첨단|산업|창업|경제|기술|제조/.test(source)) {
-    return { className: "theme-industry", label: "산업경제", icon: "R&D" };
-  }
-  if (/복지|돌봄|노인|청소년|주거|공동주택|생활/.test(source)) {
-    return { className: "theme-welfare", label: "생활복지", icon: "W" };
-  }
-  if (/교통|버스|주차|역세권|환승|이동|보행|도로/.test(source)) {
-    return { className: "theme-transport", label: "교통도시", icon: "M" };
-  }
-  if (/환경|탄소|폭염|기후|에너지|재생|냉방|미세먼지/.test(source)) {
-    return { className: "theme-climate", label: "기후환경", icon: "E" };
-  }
-  if (/행정|재정|법|특례|의회|정부|자치|교육/.test(source)) {
-    return { className: "theme-admin", label: "행정정책", icon: "A" };
-  }
-
-  return { className: "theme-city", label: article.topic || "도시정책", icon: "SRI" };
+  const normalizedTopic = normalizeTopic(article.topic, article);
+  return TOPIC_THEMES[normalizedTopic] || { className: "theme-civic", label: normalizedTopic, icon: "SRI" };
 }
 
 function renderSpotlightThumbnail(article, size = "main") {
