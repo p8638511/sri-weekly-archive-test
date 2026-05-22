@@ -559,6 +559,65 @@ input {
   object-fit: cover;
 }
 
+.topic-thumbnail {
+  background-position: center;
+  background-size: cover;
+}
+
+.topic-thumbnail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  background:
+    linear-gradient(180deg, rgba(9, 27, 52, 0.08), rgba(9, 27, 52, 0.18)),
+    radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.1), transparent 22%);
+}
+
+.topic-thumbnail::after {
+  display: none;
+}
+
+.topic-thumbnail .visual-series,
+.topic-thumbnail .visual-code,
+.topic-thumbnail .visual-label,
+.topic-thumbnail .visual-topic-pill {
+  z-index: 2;
+}
+
+.visual-topic-pill {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  min-width: clamp(132px, 20vw, 210px);
+  min-height: clamp(86px, 11vw, 132px);
+  padding: 14px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 22px 54px rgba(8, 35, 60, 0.18);
+  color: rgba(255, 255, 255, 0.98);
+  font-size: clamp(24px, 3vw, 44px);
+  font-weight: 950;
+  line-height: 1.12;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(2px);
+  word-break: keep-all;
+}
+
+.article-thumbnail .visual-topic-pill,
+.side-thumbnail .visual-topic-pill {
+  min-width: 88px;
+  min-height: 58px;
+  padding: 9px 12px;
+  border-radius: 18px;
+  font-size: 20px;
+}
+
 .content-visual::before {
   content: "";
   position: absolute;
@@ -629,7 +688,7 @@ input {
   bottom: 9%;
   z-index: 2;
   color: rgba(255, 255, 255, 0.9);
-  font-size: clamp(14px, 1.8vw, 22px);
+  font-size: clamp(18px, 2.2vw, 28px);
   font-weight: 900;
 }
 
@@ -685,12 +744,12 @@ input {
 .article-thumbnail .visual-code,
 .side-thumbnail .visual-series,
 .side-thumbnail .visual-code {
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .article-thumbnail .visual-label,
 .side-thumbnail .visual-label {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .theme-economy,

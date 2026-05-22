@@ -218,14 +218,14 @@ const ITEMS_PER_PAGE = 5;
 const RECOMMENDED_ARTICLE_COUNT = 4;
 const TOPIC_ORDER = ["경제·산업", "행정·재정", "복지·여성", "안전·교통", "도시·개발", "환경", "문화·청년", "시민·교육"];
 const TOPIC_THEMES = {
-  "경제·산업": { className: "theme-economy", label: "경제·산업", icon: "E" },
-  "행정·재정": { className: "theme-admin", label: "행정·재정", icon: "A" },
-  "복지·여성": { className: "theme-welfare", label: "복지·여성", icon: "W" },
-  "안전·교통": { className: "theme-safety", label: "안전·교통", icon: "S" },
-  "도시·개발": { className: "theme-urban", label: "도시·개발", icon: "U" },
-  "환경": { className: "theme-climate", label: "환경", icon: "N" },
-  "문화·청년": { className: "theme-culture", label: "문화·청년", icon: "C" },
-  "시민·교육": { className: "theme-civic", label: "시민·교육", icon: "P" },
+  "경제·산업": { className: "theme-economy", label: "경제·산업", image: "./assets/topic-thumbnails/economy-industry.png" },
+  "행정·재정": { className: "theme-admin", label: "행정·재정", image: "./assets/topic-thumbnails/admin-finance.png" },
+  "복지·여성": { className: "theme-welfare", label: "복지·여성", image: "./assets/topic-thumbnails/welfare-women.png" },
+  "안전·교통": { className: "theme-safety", label: "안전·교통", image: "./assets/topic-thumbnails/safety-transport.png" },
+  "도시·개발": { className: "theme-urban", label: "도시·개발", image: "./assets/topic-thumbnails/urban-development.png" },
+  "환경": { className: "theme-climate", label: "환경", image: "./assets/topic-thumbnails/environment.png" },
+  "문화·청년": { className: "theme-culture", label: "문화·청년", image: "./assets/topic-thumbnails/culture-youth.png" },
+  "시민·교육": { className: "theme-civic", label: "시민·교육", image: "./assets/topic-thumbnails/civic-education.png" },
 };
 
 let weeklyIssues = fallbackWeeklyIssues;
@@ -804,7 +804,7 @@ function renderCover(issue) {
 
 function getThumbnailTheme(article) {
   const normalizedTopic = normalizeTopic(article.topic, article);
-  return TOPIC_THEMES[normalizedTopic] || { className: "theme-civic", label: normalizedTopic, icon: "SRI" };
+  return TOPIC_THEMES[normalizedTopic] || { className: "theme-civic", label: normalizedTopic || "시민·교육", image: "./assets/topic-thumbnails/civic-education.png" };
 }
 
 function escapeAttribute(value) {
@@ -829,23 +829,24 @@ function renderCustomThumbnail(article, className) {
   `;
 }
 
+function renderTopicThumbnail(article, className) {
+  const theme = getThumbnailTheme(article);
+  return `
+    <div class="content-visual topic-thumbnail ${className} ${theme.className}" style="background-image: url('${escapeAttribute(theme.image)}')" aria-hidden="true">
+      <span class="visual-series">SRI Weekly</span>
+      <span class="visual-code">${article.volume}호</span>
+      <span class="visual-topic-pill">${theme.label}</span>
+      <span class="visual-label">${theme.label}</span>
+    </div>
+  `;
+}
+
 function renderSpotlightThumbnail(article, size = "main") {
   if (hasCustomThumbnail(article)) {
     return renderCustomThumbnail(article, `spotlight-thumbnail ${size === "side" ? "side-thumbnail" : ""}`);
   }
 
-  const theme = getThumbnailTheme(article);
-  return `
-    <div class="content-visual spotlight-thumbnail ${size === "side" ? "side-thumbnail" : ""} ${theme.className}" aria-hidden="true">
-      <span class="visual-series">SRI Weekly</span>
-      <span class="visual-code">${article.volume}호 · ${article.issueCode}</span>
-      <span class="visual-shape visual-shape-one"></span>
-      <span class="visual-shape visual-shape-two"></span>
-      <span class="visual-grid"></span>
-      <span class="visual-icon">${theme.icon}</span>
-      <span class="visual-label">${theme.label}</span>
-    </div>
-  `;
+  return renderTopicThumbnail(article, `spotlight-thumbnail ${size === "side" ? "side-thumbnail" : ""}`);
 }
 
 function renderPopularThumbnail(article) {
@@ -853,18 +854,7 @@ function renderPopularThumbnail(article) {
     return renderCustomThumbnail(article, "article-thumbnail");
   }
 
-  const theme = getThumbnailTheme(article);
-  return `
-    <div class="content-visual article-thumbnail ${theme.className}" aria-hidden="true">
-      <span class="visual-series">SRI Weekly</span>
-      <span class="visual-code">${article.volume}호</span>
-      <span class="visual-shape visual-shape-one"></span>
-      <span class="visual-shape visual-shape-two"></span>
-      <span class="visual-grid"></span>
-      <span class="visual-icon">${theme.icon}</span>
-      <span class="visual-label">${theme.label}</span>
-    </div>
-  `;
+  return renderTopicThumbnail(article, "article-thumbnail");
 }
 
 function openArticle(articleId) {
