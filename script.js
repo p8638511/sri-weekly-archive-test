@@ -837,14 +837,12 @@ function openArticle(articleId) {
 
   const related = getRelatedArticles(article);
   const articlePreviewUrl = article.previewPdf || article.pdf;
+  const keywordTags = article.tags.map(cleanKeyword).filter(Boolean);
   articleDetail.innerHTML = `
     <p class="eyebrow">SRI Weekly ${article.volume}호 (${article.issueCode}) | ${formatDate(article.date)}</p>
     <h2>${article.title}</h2>
     <div class="detail-meta">
-      <span>${article.type}</span>
-      <span>${article.topic}</span>
-      <span>${article.author}</span>
-      ${article.tags.map((tag) => `<span>#${tag}</span>`).join("")}
+      ${keywordTags.map((tag) => `<span>#${tag}</span>`).join("")}
     </div>
     <div class="article-body">
       <p>${article.summary}</p>
@@ -886,6 +884,52 @@ function openArticle(articleId) {
   }
 
   articleDialog.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function cleanKeyword(tag) {
+  const value = String(tag || "").replace(/^#/, "").trim();
+  const blocked = [
+    "수원시정연구원",
+    "sri",
+    "sri weekly",
+    "정책동향",
+    "정책 동향",
+    "정책브리프",
+    "정책 브리프",
+    "도시전략",
+    "도시 전략",
+    "산업전략",
+    "산업 전략",
+    "관광전략",
+    "관광 전략",
+    "교통브리프",
+    "교통 브리프",
+    "환경브리프",
+    "환경 브리프",
+    "경제동향",
+    "경제 동향",
+    "법제분석",
+    "법제 분석",
+    "기후안전",
+    "기후 안전",
+    "문화청년",
+    "문화·청년",
+    "경제산업",
+    "경제·산업",
+    "행정재정",
+    "행정·재정",
+    "복지여성",
+    "복지·여성",
+    "안전교통",
+    "안전·교통",
+    "도시개발",
+    "도시·개발",
+    "시민교육",
+    "시민·교육",
+    "환경",
+  ];
+
+  return blocked.includes(value.toLowerCase()) || blocked.includes(value) ? "" : value;
 }
 
 function openPdfPreview(url, title) {
