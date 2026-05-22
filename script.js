@@ -214,9 +214,6 @@ const DATA_SOURCE = {
   articlesSheet: "articles",
 };
 
-let weeklyIssues = fallbackWeeklyIssues;
-let allArticles = buildAllArticles(weeklyIssues);
-
 const ITEMS_PER_PAGE = 5;
 const RECOMMENDED_ARTICLE_COUNT = 4;
 const TOPIC_ORDER = ["경제·산업", "행정·재정", "복지·여성", "안전·교통", "도시·개발", "환경", "문화·청년", "시민·교육"];
@@ -226,10 +223,13 @@ const TOPIC_THEMES = {
   "복지·여성": { className: "theme-welfare", label: "복지·여성", icon: "W" },
   "안전·교통": { className: "theme-safety", label: "안전·교통", icon: "S" },
   "도시·개발": { className: "theme-urban", label: "도시·개발", icon: "U" },
-  환경: { className: "theme-climate", label: "환경", icon: "N" },
+  "환경": { className: "theme-climate", label: "환경", icon: "N" },
   "문화·청년": { className: "theme-culture", label: "문화·청년", icon: "C" },
   "시민·교육": { className: "theme-civic", label: "시민·교육", icon: "P" },
 };
+
+let weeklyIssues = fallbackWeeklyIssues;
+let allArticles = buildAllArticles(weeklyIssues);
 
 const state = {
   topic: "전체",
