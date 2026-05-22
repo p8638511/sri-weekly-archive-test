@@ -560,19 +560,33 @@ input {
 }
 
 .topic-thumbnail {
-  background-position: center;
-  background-size: cover;
+  background: #183d64;
 }
 
 .topic-thumbnail::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   display: block;
   background:
     linear-gradient(180deg, rgba(9, 27, 52, 0.08), rgba(9, 27, 52, 0.18)),
     radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.1), transparent 22%);
+}
+
+.topic-thumbnail-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-thumbnail.topic-thumbnail {
+  aspect-ratio: 16 / 9;
+  min-height: 142px;
 }
 
 .topic-thumbnail::after {
@@ -581,7 +595,6 @@ input {
 
 .topic-thumbnail .visual-series,
 .topic-thumbnail .visual-code,
-.topic-thumbnail .visual-label,
 .topic-thumbnail .visual-topic-pill {
   z-index: 2;
 }
@@ -604,7 +617,7 @@ input {
   font-weight: 950;
   line-height: 1.12;
   text-align: center;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -42%);
   backdrop-filter: blur(2px);
   word-break: keep-all;
 }

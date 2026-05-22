@@ -832,11 +832,11 @@ function renderCustomThumbnail(article, className) {
 function renderTopicThumbnail(article, className) {
   const theme = getThumbnailTheme(article);
   return `
-    <div class="content-visual topic-thumbnail ${className} ${theme.className}" style="background-image: url('${escapeAttribute(theme.image)}')" aria-hidden="true">
+    <div class="content-visual topic-thumbnail ${className} ${theme.className}" aria-hidden="true">
+      <img class="topic-thumbnail-image" src="${escapeAttribute(theme.image)}" alt="" loading="lazy" />
       <span class="visual-series">SRI Weekly</span>
       <span class="visual-code">${article.volume}호</span>
       <span class="visual-topic-pill">${theme.label}</span>
-      <span class="visual-label">${theme.label}</span>
     </div>
   `;
 }
