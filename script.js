@@ -215,7 +215,7 @@ const DATA_SOURCE = {
 };
 
 const ITEMS_PER_PAGE = 5;
-const RECOMMENDED_ARTICLE_COUNT = 4;
+const RECOMMENDED_ARTICLE_COUNT = 5;
 const TOPIC_ORDER = ["경제·산업", "행정·재정", "복지·여성", "안전·교통", "도시·개발", "환경", "문화·청년", "시민·교육"];
 const TOPIC_THEMES = {
   "경제·산업": { className: "theme-economy", label: "경제·산업", image: "./assets/topic-thumbnails/economy-industry.png" },
@@ -628,10 +628,8 @@ function renderPopularArticleCard(article) {
     <article class="popular-card">
       <button class="popular-card-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
         ${renderPopularThumbnail(article)}
-        <span>${article.topic}</span>
         <strong>${article.title}</strong>
         <em>${article.summary}</em>
-        <small>${article.volume}호 · ${formatDate(article.date)}</small>
       </button>
     </article>
   `;
