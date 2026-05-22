@@ -94,6 +94,31 @@ input {
   font-size: 15px;
 }
 
+.homepage-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #344054;
+  text-decoration: none;
+}
+
+.homepage-link span {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e92d2d;
+  color: white;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.homepage-link:hover {
+  color: var(--blue);
+}
+
 .hero {
   display: grid;
   align-items: center;
