@@ -1511,6 +1511,11 @@ input {
   line-height: 1.7;
 }
 
+.newsletter-side {
+  display: grid;
+  gap: 12px;
+}
+
 .copyright-panel {
   display: grid;
   gap: 10px;
