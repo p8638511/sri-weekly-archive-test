@@ -251,6 +251,9 @@ function buildAllArticles(issues) {
       issueTitle: issue.title,
       issuePdf: issue.pdf,
       pdf: article.pdf || "",
+      thumbnailUrl: article.thumbnailUrl || "",
+      thumbnailAlt: article.thumbnailAlt || `${article.title} 썸네일`,
+      thumbnailStatus: article.thumbnailStatus || "",
     })),
   );
 }
@@ -353,6 +356,9 @@ async function loadWeeklyIssuesFromSheets() {
         body: row.body || row.summary || "본문 요약은 준비 중입니다.",
         pdf: row.article_pdf_download_url || row.article_pdf_preview_url || "",
         previewPdf: toDriveViewUrl(row.article_pdf_preview_url || row.article_pdf_download_url),
+        thumbnailUrl: row.thumbnail_url || "",
+        thumbnailAlt: row.thumbnail_alt || `${row.article_title} 썸네일`,
+        thumbnailStatus: row.thumbnail_status || "",
       });
       return grouped;
     }, {});
@@ -801,7 +807,33 @@ function getThumbnailTheme(article) {
   return TOPIC_THEMES[normalizedTopic] || { className: "theme-civic", label: normalizedTopic, icon: "SRI" };
 }
 
+function escapeAttribute(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function hasCustomThumbnail(article) {
+  const status = String(article.thumbnailStatus || "").trim().toLowerCase();
+  return Boolean(article.thumbnailUrl) && !["hidden", "draft"].includes(status);
+}
+
+function renderCustomThumbnail(article, className) {
+  const alt = article.thumbnailAlt || `${article.title} 썸네일`;
+  return `
+    <div class="content-visual custom-thumbnail ${className}">
+      <img src="${escapeAttribute(article.thumbnailUrl)}" alt="${escapeAttribute(alt)}" loading="lazy" />
+    </div>
+  `;
+}
+
 function renderSpotlightThumbnail(article, size = "main") {
+  if (hasCustomThumbnail(article)) {
+    return renderCustomThumbnail(article, `spotlight-thumbnail ${size === "side" ? "side-thumbnail" : ""}`);
+  }
+
   const theme = getThumbnailTheme(article);
   return `
     <div class="content-visual spotlight-thumbnail ${size === "side" ? "side-thumbnail" : ""} ${theme.className}" aria-hidden="true">
@@ -817,6 +849,10 @@ function renderSpotlightThumbnail(article, size = "main") {
 }
 
 function renderPopularThumbnail(article) {
+  if (hasCustomThumbnail(article)) {
+    return renderCustomThumbnail(article, "article-thumbnail");
+  }
+
   const theme = getThumbnailTheme(article);
   return `
     <div class="content-visual article-thumbnail ${theme.className}" aria-hidden="true">

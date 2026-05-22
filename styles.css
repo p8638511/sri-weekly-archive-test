@@ -542,6 +542,23 @@ input {
   border-radius: 6px;
 }
 
+.custom-thumbnail {
+  display: block;
+  background: #eef4f0;
+}
+
+.custom-thumbnail::before,
+.custom-thumbnail::after {
+  display: none;
+}
+
+.custom-thumbnail img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .content-visual::before {
   content: "";
   position: absolute;
