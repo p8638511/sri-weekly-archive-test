@@ -606,12 +606,14 @@ function renderSpotlightArticle(article) {
   const theme = getThumbnailTheme(article);
   return `
     <article class="spotlight-card">
-      <button class="spotlight-main ${theme.className}" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
-        <span class="spotlight-card-top">
-          <span class="spotlight-topic">${theme.label}</span>
-          <small>${article.volume}호 · ${article.issueCode}</small>
+      <button class="spotlight-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        <span class="spotlight-visual ${theme.className}">
+          <span class="spotlight-card-top">
+            <span class="spotlight-topic">${theme.label}</span>
+            <small>${article.volume}호 · ${article.issueCode}</small>
+          </span>
+          <strong>${article.title}</strong>
         </span>
-        <strong>${article.title}</strong>
         <em>${article.summary}</em>
         <small>${article.volume}호 · ${formatDate(article.date)}</small>
         <span class="spotlight-read-more">자세히 보기</span>

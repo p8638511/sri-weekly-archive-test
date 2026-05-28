@@ -276,21 +276,31 @@ input {
   overflow: hidden;
   justify-items: stretch;
   align-content: center;
-  gap: 24px;
+  gap: 20px;
   width: min(100%, 680px);
-  min-height: 380px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  min-height: 0;
+  border: 1px solid rgba(210, 224, 235, 0.8);
   border-radius: 8px;
-  padding: clamp(28px, 4vw, 48px);
-  background:
-    radial-gradient(circle at 14% 72%, rgba(255, 255, 255, 0.18), transparent 22%),
-    radial-gradient(circle at 76% 30%, rgba(255, 255, 255, 0.16), transparent 18%),
-    linear-gradient(135deg, #0f766e 0%, #35a887 48%, #a0d9bd 100%);
-  box-shadow: 0 26px 58px rgba(44, 68, 84, 0.18);
+  padding: 0 0 28px;
+  background: white;
+  box-shadow: 0 26px 58px rgba(44, 68, 84, 0.14);
   text-align: center;
 }
 
-.spotlight-main::before {
+.spotlight-visual {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  gap: 34px;
+  min-height: 285px;
+  border-radius: 8px 8px 0 0;
+  padding: clamp(28px, 4vw, 48px);
+  color: white;
+}
+
+.spotlight-visual::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -304,7 +314,8 @@ input {
   pointer-events: none;
 }
 
-.spotlight-main > * {
+.spotlight-main > *,
+.spotlight-visual > * {
   position: relative;
   z-index: 1;
 }
@@ -408,7 +419,7 @@ input {
   font-weight: 700;
 }
 
-.spotlight-main:hover > strong,
+.spotlight-main:hover .spotlight-visual > strong,
 .popular-card-main:hover > strong,
 .spotlight-side-card:hover > strong {
   text-decoration: underline;
@@ -842,7 +853,7 @@ input {
   white-space: nowrap;
 }
 
-.spotlight-main > strong {
+.spotlight-visual > strong {
   justify-self: center;
   max-width: 720px;
   color: white;
@@ -853,8 +864,9 @@ input {
 
 .spotlight-main > em {
   justify-self: center;
-  max-width: 760px;
-  color: rgba(255, 255, 255, 0.86);
+  max-width: 600px;
+  padding: 0 30px;
+  color: #667085;
   font-size: 17px;
   font-style: normal;
   line-height: 1.7;
@@ -863,7 +875,7 @@ input {
 
 .spotlight-main > small {
   justify-self: center;
-  color: rgba(255, 255, 255, 0.9);
+  color: #98a2b3;
   font-size: 15px;
   font-weight: 900;
 }
@@ -885,8 +897,8 @@ input {
   margin-top: auto;
   border-radius: 999px;
   padding: 0 16px;
-  background: white;
-  color: #155e75;
+  background: #163a70;
+  color: white;
   font-size: 14px;
   font-weight: 900;
 }
@@ -1956,7 +1968,13 @@ input {
     font-size: 15px;
   }
 
-  .spotlight-main > strong {
+  .spotlight-visual {
+    min-height: 235px;
+    gap: 24px;
+    padding: 26px;
+  }
+
+  .spotlight-visual > strong {
     font-size: 28px;
   }
 
