@@ -216,14 +216,15 @@ const DATA_SOURCE = {
 
 const ITEMS_PER_PAGE = 5;
 const RECOMMENDED_ARTICLE_COUNT = 5;
-const TOPIC_ORDER = ["경제·산업", "행정·재정", "복지·여성", "안전·교통", "도시·개발", "환경", "문화·청년", "시민·교육"];
+const TOPIC_ORDER = ["경제·산업", "행정·재정", "복지·여성", "안전·교통", "도시·개발", "환경·녹지", "문화·청년", "시민·교육"];
 const TOPIC_THEMES = {
   "경제·산업": { className: "theme-economy", label: "경제·산업", image: "./assets/topic-thumbnails/economy-industry.png" },
   "행정·재정": { className: "theme-admin", label: "행정·재정", image: "./assets/topic-thumbnails/admin-finance.png" },
   "복지·여성": { className: "theme-welfare", label: "복지·여성", image: "./assets/topic-thumbnails/welfare-women.png" },
   "안전·교통": { className: "theme-safety", label: "안전·교통", image: "./assets/topic-thumbnails/safety-transport.png" },
   "도시·개발": { className: "theme-urban", label: "도시·개발", image: "./assets/topic-thumbnails/urban-development.png" },
-  "환경": { className: "theme-climate", label: "환경", image: "./assets/topic-thumbnails/environment.png" },
+  "환경·녹지": { className: "theme-climate", label: "환경·녹지", image: "./assets/topic-thumbnails/environment.png" },
+  "환경": { className: "theme-climate", label: "환경·녹지", image: "./assets/topic-thumbnails/environment.png" },
   "문화·청년": { className: "theme-culture", label: "문화·청년", image: "./assets/topic-thumbnails/culture-youth.png" },
   "시민·교육": { className: "theme-civic", label: "시민·교육", image: "./assets/topic-thumbnails/civic-education.png" },
 };
@@ -403,6 +404,7 @@ function splitList(value) {
 
 function normalizeTopic(topic, item = {}) {
   const rawTopic = String(topic || "").trim();
+  if (rawTopic === "환경") return "환경·녹지";
   if (TOPIC_ORDER.includes(rawTopic)) return rawTopic;
 
   const source = [
@@ -422,7 +424,7 @@ function normalizeTopic(topic, item = {}) {
   if (/복지|여성|돌봄|노인|청소년|아동|주거복지|가족|취약계층/.test(source)) return "복지·여성";
   if (/안전|교통|버스|주차|재난|침수|화재|범죄|보행|도로|폭염/.test(source)) return "안전·교통";
   if (/도시공간|도시|개발|역세권|복합개발|재개발|공동주택|생활권|공간/.test(source)) return "도시·개발";
-  if (/환경|탄소|기후|에너지|재생|냉방|미세먼지|녹색|자원/.test(source)) return "환경";
+  if (/환경|녹지|탄소|기후|에너지|재생|냉방|미세먼지|녹색|자원/.test(source)) return "환경·녹지";
   if (/문화|관광|청년|콘텐츠|k-콘텐츠|수원화성|방문|체류|축제|예술/.test(source)) return "문화·청년";
   if (/시민|교육|학교|참여|거버넌스|공론|주민|재정교육|평생교육/.test(source)) return "시민·교육";
 
@@ -676,8 +678,8 @@ function areTopicsRelated(baseTopic, candidateTopic) {
     ["경제·산업", "도시·개발", "문화·청년"],
     ["행정·재정", "시민·교육"],
     ["복지·여성", "시민·교육", "안전·교통"],
-    ["안전·교통", "도시·개발", "환경"],
-    ["환경", "도시·개발", "안전·교통"],
+    ["안전·교통", "도시·개발", "환경·녹지"],
+    ["환경·녹지", "도시·개발", "안전·교통"],
   ];
   return groups.some((group) => group.includes(baseTopic) && group.includes(candidateTopic));
 }
@@ -959,6 +961,8 @@ function cleanKeyword(tag) {
     "시민교육",
     "시민·교육",
     "환경",
+    "환경녹지",
+    "환경·녹지",
   ];
 
   return blocked.includes(value.toLowerCase()) || blocked.includes(value) ? "" : value;
