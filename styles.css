@@ -832,13 +832,13 @@ input {
 
 .popular-card-main > strong {
   display: -webkit-box;
-  min-height: 64px;
+  min-height: 86px;
   overflow: hidden;
   color: #1f2937;
   font-size: 20px;
   line-height: 1.42;
   word-break: keep-all;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
@@ -1489,8 +1489,8 @@ input {
 
 .newsletter {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
-  gap: 24px;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(420px, 0.85fr);
+  gap: clamp(28px, 6vw, 110px);
   align-items: center;
   padding-top: 40px;
   padding-bottom: 54px;
@@ -1506,6 +1506,8 @@ input {
 .newsletter-side {
   display: grid;
   gap: 12px;
+  justify-self: start;
+  width: min(600px, 100%);
 }
 
 .copyright-panel {
@@ -1696,6 +1698,23 @@ input {
   line-height: 1.8;
 }
 
+.article-body p {
+  margin: 0 0 18px;
+}
+
+.article-more-toggle {
+  display: none;
+  align-items: center;
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 14px;
+  background: #eef5ff;
+  color: var(--blue);
+  cursor: pointer;
+  font-weight: 900;
+}
+
 .related-list {
   display: grid;
   gap: 10px;
@@ -1731,6 +1750,11 @@ input {
   .issue-summary-card,
   .issue-detail-top {
     grid-template-columns: 1fr;
+  }
+
+  .newsletter-side {
+    justify-self: stretch;
+    width: 100%;
   }
 
   .featured-grid {
@@ -1856,6 +1880,11 @@ input {
     scroll-snap-align: start;
   }
 
+  .popular-card-main > strong {
+    min-height: 76px;
+    font-size: 18px;
+  }
+
   .popular-panel .article-thumbnail {
     min-height: 150px;
   }
@@ -1885,6 +1914,47 @@ input {
 
   .article-thumbnail {
     min-height: 190px;
+  }
+
+  .article-dialog {
+    width: min(92vw, 440px);
+  }
+
+  .article-dialog article {
+    padding: 24px;
+  }
+
+  .article-dialog h2 {
+    font-size: 32px;
+    line-height: 1.25;
+    word-break: keep-all;
+  }
+
+  .detail-meta {
+    gap: 10px;
+  }
+
+  .detail-meta span {
+    font-size: 16px;
+  }
+
+  .article-body {
+    font-size: 22px;
+    line-height: 1.75;
+  }
+
+  .article-body-collapsed .article-extra {
+    display: none;
+  }
+
+  .article-body-expanded .article-extra {
+    display: block;
+  }
+
+  .article-more-toggle {
+    display: inline-flex;
+    margin: -2px 0 18px;
+    font-size: 16px;
   }
 
   .subscribe-form,

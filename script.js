@@ -868,9 +868,12 @@ function openArticle(articleId) {
     <div class="detail-meta">
       ${keywordTags.map((tag) => `<span>#${tag}</span>`).join("")}
     </div>
-    <div class="article-body">
-      <p>${article.summary}</p>
-      <p>${article.body}</p>
+    <div class="article-body article-body-collapsed" data-collapsible-body>
+      <p class="article-summary">${article.summary}</p>
+      <div class="article-extra">
+        <p>${article.body}</p>
+      </div>
+      <button class="article-more-toggle" type="button" data-more-toggle aria-expanded="false">더보기</button>
       <div class="article-pdf-actions">
         ${
           article.pdf
@@ -885,7 +888,7 @@ function openArticle(articleId) {
       </div>
     </div>
     <section class="related-list">
-      <h3>이 글과 연결되는 과거 SRI Weekly</h3>
+      <h3>같은 주제 SRI Weekly</h3>
       ${
         related.length
           ? related
@@ -893,7 +896,7 @@ function openArticle(articleId) {
                 (item) => `
           <button class="related-item" type="button" data-related-id="${item.id}">
             <strong>${item.title}</strong>
-            <span>${item.volume}호 · ${formatDate(item.date)} · 연결 키워드 ${item.sharedTags.join(", ") || item.topic}</span>
+            <span>${item.volume}호 · ${formatDate(item.date)}</span>
           </button>
         `,
               )
@@ -1114,6 +1117,16 @@ issueList.addEventListener("click", (event) => {
 });
 
 articleDetail.addEventListener("click", (event) => {
+  const toggleButton = event.target.closest("[data-more-toggle]");
+  if (toggleButton) {
+    const body = toggleButton.closest("[data-collapsible-body]");
+    const isExpanded = body.classList.toggle("article-body-expanded");
+    body.classList.toggle("article-body-collapsed", !isExpanded);
+    toggleButton.textContent = isExpanded ? "간략히" : "더보기";
+    toggleButton.setAttribute("aria-expanded", String(isExpanded));
+    return;
+  }
+
   const previewButton = event.target.closest("[data-preview-pdf]");
   if (previewButton) {
     openPdfPreview(previewButton.dataset.previewPdf, previewButton.dataset.previewTitle);
