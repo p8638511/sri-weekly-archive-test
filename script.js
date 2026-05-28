@@ -585,13 +585,14 @@ function renderSpotlightSideArticle(article, direction, isVisible) {
     return `<div class="spotlight-side" aria-hidden="true"></div>`;
   }
 
+  const theme = getThumbnailTheme(article);
   const directionValue = direction === "prev" ? -1 : 1;
   const label = direction === "prev" ? "최신 발간물 이전" : "최신 발간물 다음";
 
   return `
     <div class="spotlight-side spotlight-side-${direction}">
-      <button class="spotlight-side-card" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
-        <span>${article.topic}</span>
+      <button class="spotlight-side-card ${theme.className}" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        <span>${theme.label}</span>
         <strong>${article.title}</strong>
         <em>${article.summary}</em>
         <small>${article.volume}호 · ${formatDate(article.date)}</small>
@@ -602,13 +603,17 @@ function renderSpotlightSideArticle(article, direction, isVisible) {
 }
 
 function renderSpotlightArticle(article) {
+  const theme = getThumbnailTheme(article);
   return `
     <article class="spotlight-card">
-      <button class="spotlight-main" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
-        <small>${article.volume}호 · ${formatDate(article.date)}</small>
-        <span class="spotlight-topic">${article.topic}</span>
+      <button class="spotlight-main ${theme.className}" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        <span class="spotlight-card-top">
+          <span class="spotlight-topic">${theme.label}</span>
+          <small>${article.volume}호 · ${article.issueCode}</small>
+        </span>
         <strong>${article.title}</strong>
         <em>${article.summary}</em>
+        <small>${article.volume}호 · ${formatDate(article.date)}</small>
         <span class="spotlight-read-more">자세히 보기</span>
       </button>
     </article>
