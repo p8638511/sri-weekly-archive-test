@@ -86,47 +86,6 @@ input {
   font-size: 13px;
 }
 
-.nav {
-  display: flex;
-  gap: 20px;
-  color: #344054;
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.homepage-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #344054;
-  text-decoration: none;
-}
-
-.home-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-}
-
-.home-icon svg {
-  width: 23px;
-  height: 23px;
-  overflow: visible;
-}
-
-.home-icon path {
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2.8;
-}
-
-.homepage-link:hover {
-  color: var(--blue);
-}
-
 .hero {
   display: grid;
   align-items: center;
@@ -1837,11 +1796,6 @@ input {
     flex-direction: column;
   }
 
-  .nav {
-    width: 100%;
-    justify-content: space-between;
-  }
-
   .hero {
     min-height: auto;
     padding: 42px 24px;
@@ -1878,6 +1832,32 @@ input {
 
   .popular-panel {
     padding-inline: 16px;
+  }
+
+  .popular-panel .featured-grid {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin-inline: -4px;
+    padding: 4px 4px 18px;
+    scroll-padding-left: 4px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .popular-panel .featured-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .popular-panel .popular-card {
+    flex: 0 0 min(82vw, 320px);
+    scroll-snap-align: start;
+  }
+
+  .popular-panel .article-thumbnail {
+    min-height: 150px;
   }
 
   .spotlight-stage {
