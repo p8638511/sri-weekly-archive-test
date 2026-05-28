@@ -1039,15 +1039,18 @@ searchInput.addEventListener("input", (event) => {
   renderIssues();
 });
 
-document.querySelector(".brand").addEventListener("click", () => {
-  state.selectedIssueVolume = null;
-  state.issuePage = 1;
-  state.topic = "전체";
-  state.query = "";
-  searchInput.value = "";
-  renderFilters();
-  renderIssues();
-});
+const brandLink = document.querySelector(".brand");
+if (brandLink) {
+  brandLink.addEventListener("click", () => {
+    state.selectedIssueVolume = null;
+    state.issuePage = 1;
+    state.topic = "전체";
+    state.query = "";
+    searchInput.value = "";
+    renderFilters();
+    renderIssues();
+  });
+}
 
 document.querySelector(".featured-publications").addEventListener("click", (event) => {
   const slideButton = event.target.closest("[data-slide-target]");

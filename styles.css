@@ -42,50 +42,6 @@ input {
   font: inherit;
 }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 16px clamp(20px, 4vw, 56px);
-  border-bottom: 1px solid rgba(217, 225, 232, 0.8);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  background: var(--blue);
-  color: white;
-  font-weight: 800;
-  letter-spacing: 0;
-}
-
-.brand strong,
-.brand small {
-  display: block;
-}
-
-.brand small {
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
 .hero {
   display: grid;
   align-items: center;
@@ -103,23 +59,8 @@ input {
   max-width: 980px;
 }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  border-radius: 4px;
-  padding: 0 18px;
-  background: #eaf5ee;
-  color: #245b35;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
-
 .hero h1 {
-  margin: 26px 0 10px;
+  margin: 0 0 10px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(44px, 5vw, 58px);
   line-height: 1;
@@ -1817,11 +1758,6 @@ input {
 }
 
 @media (max-width: 640px) {
-  .topbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .hero {
     min-height: auto;
     padding: 42px 24px;
