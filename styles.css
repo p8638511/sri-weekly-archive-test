@@ -125,7 +125,15 @@ input {
 .latest-panel {
   display: grid;
   justify-items: center;
-  min-height: 650px;
+  min-height: 590px;
+  overflow: hidden;
+  border-radius: 8px;
+  padding: 54px clamp(18px, 4vw, 54px);
+  background:
+    radial-gradient(circle at 4% 52%, rgba(255, 255, 255, 0.12), transparent 22%),
+    radial-gradient(circle at 88% 8%, rgba(255, 255, 255, 0.14), transparent 24%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.045) 0 2px, transparent 2px 15px),
+    linear-gradient(135deg, #123972 0%, #24535d 48%, #16836f 100%);
 }
 
 .popular-panel {
@@ -154,6 +162,10 @@ input {
 .latest-panel .featured-head {
   justify-content: center;
   text-align: center;
+}
+
+.latest-panel .featured-head h2 {
+  color: white;
 }
 
 .popular-panel .featured-head h2 {
@@ -217,7 +229,7 @@ input {
   justify-content: center;
   gap: clamp(18px, 3vw, 48px);
   width: 100%;
-  min-height: 530px;
+  min-height: 430px;
   overflow: hidden;
 }
 
@@ -260,9 +272,18 @@ input {
 }
 
 .spotlight-main {
-  justify-items: center;
-  gap: 14px;
-  text-align: center;
+  justify-items: start;
+  gap: 16px;
+  width: min(100%, 720px);
+  min-height: 360px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 8px;
+  padding: clamp(30px, 4vw, 52px);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(244, 249, 247, 0.78)),
+    radial-gradient(circle at 95% 100%, rgba(22, 131, 111, 0.14), transparent 30%);
+  box-shadow: 0 26px 60px rgba(7, 26, 38, 0.26);
+  text-align: left;
 }
 
 .popular-card-main {
@@ -286,8 +307,9 @@ input {
   min-width: 0;
   border: 0;
   border-radius: 8px;
-  padding: 14px;
-  background: white;
+  min-height: 300px;
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.78);
   color: inherit;
   cursor: pointer;
   text-align: left;
@@ -304,7 +326,7 @@ input {
 }
 
 .spotlight-side-card > span {
-  color: #e8794f;
+  color: #9b1c31;
   font-size: 14px;
   font-weight: 900;
 }
@@ -333,6 +355,7 @@ input {
 }
 
 .spotlight-side-card > small {
+  margin-top: auto;
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
@@ -734,16 +757,21 @@ input {
 }
 
 .spotlight-topic {
-  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #e9f2f1;
   color: var(--green);
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 900;
 }
 
 .spotlight-main > strong {
   max-width: 720px;
   color: #1f2937;
-  font-size: clamp(26px, 3vw, 36px);
+  font-size: clamp(30px, 3.4vw, 44px);
   line-height: 1.3;
   word-break: keep-all;
 }
@@ -758,8 +786,30 @@ input {
 }
 
 .spotlight-main > small {
-  color: #9aa4b2;
+  color: #5f6d7a;
   font-size: 15px;
+  font-weight: 800;
+}
+
+.spotlight-kicker {
+  color: #9b1c31;
+  font-size: 14px;
+  font-weight: 950;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.spotlight-read-more {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: auto;
+  border-radius: 999px;
+  padding: 0 16px;
+  background: #123972;
+  color: white;
+  font-size: 14px;
+  font-weight: 900;
 }
 
 .popular-card {
@@ -1725,9 +1775,9 @@ input {
     min-height: 135px;
   }
 
-  .spotlight-side-card > em,
-  .spotlight-side-card > small {
-    display: none;
+  .spotlight-side-card {
+    min-height: 240px;
+    padding: 22px;
   }
 
   .toolbar {
@@ -1790,6 +1840,39 @@ input {
 
   .latest-panel {
     min-height: auto;
+    padding: 36px 18px;
+  }
+
+  .latest-panel .featured-head {
+    margin-bottom: 18px;
+  }
+
+  .latest-panel .featured-head h2 {
+    width: 100%;
+    text-align: center;
+  }
+
+  .spotlight-stage {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .spotlight-main {
+    min-height: auto;
+    padding: 26px;
+  }
+
+  .spotlight-main > strong {
+    font-size: 28px;
+  }
+
+  .spotlight-main > em {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .spotlight-read-more {
+    min-height: 38px;
   }
 
   .popular-panel {
