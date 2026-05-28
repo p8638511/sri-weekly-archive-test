@@ -131,10 +131,9 @@ input {
   border-radius: 0;
   padding: 42px clamp(28px, 5vw, 72px);
   background:
-    radial-gradient(circle at 86% 18%, rgba(130, 185, 151, 0.5), transparent 28%),
-    radial-gradient(circle at 8% 82%, rgba(232, 121, 79, 0.24), transparent 26%),
-    radial-gradient(circle at 50% 108%, rgba(190, 214, 198, 0.5), transparent 30%),
-    linear-gradient(135deg, #fbfcfb 0%, #eef6ef 48%, #f8ede6 100%);
+    radial-gradient(circle at 86% 20%, rgba(199, 226, 210, 0.46), transparent 28%),
+    radial-gradient(circle at 8% 82%, rgba(236, 226, 218, 0.52), transparent 26%),
+    linear-gradient(180deg, #fbfcfb 0%, #f8faf8 54%, #f7f2ef 100%);
 }
 
 .popular-panel {
@@ -273,19 +272,40 @@ input {
 }
 
 .spotlight-main {
+  position: relative;
+  overflow: hidden;
   justify-items: start;
   gap: 16px;
   width: min(100%, 640px);
   min-height: 310px;
-  border: 1px solid rgba(172, 196, 184, 0.58);
+  border: 1px solid rgba(114, 190, 210, 0.36);
   border-radius: 8px;
   padding: clamp(30px, 4vw, 52px);
   background:
-    radial-gradient(circle at 100% 0%, rgba(132, 195, 159, 0.18), transparent 30%),
-    radial-gradient(circle at 0% 100%, rgba(232, 121, 79, 0.12), transparent 30%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(236, 246, 240, 0.9));
-  box-shadow: 0 20px 45px rgba(31, 61, 55, 0.15);
+    radial-gradient(circle at 88% 22%, rgba(255, 255, 255, 0.18), transparent 22%),
+    radial-gradient(circle at 12% 88%, rgba(255, 255, 255, 0.16), transparent 26%),
+    linear-gradient(125deg, rgba(27, 92, 180, 0.96) 0%, rgba(34, 177, 207, 0.9) 58%, rgba(51, 204, 202, 0.88) 100%);
+  box-shadow: 0 24px 55px rgba(21, 94, 117, 0.22);
   text-align: left;
+}
+
+.spotlight-main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(132deg, transparent 0 45%, rgba(255, 255, 255, 0.24) 45% 48%, transparent 48%),
+    radial-gradient(ellipse at 86% 64%, rgba(255, 255, 255, 0.24) 0 16%, transparent 17%),
+    radial-gradient(ellipse at 12% 78%, rgba(255, 255, 255, 0.18) 0 20%, transparent 21%),
+    radial-gradient(circle at 82% 72%, rgba(255, 255, 255, 0.22) 1px, transparent 2px);
+  background-size: auto, auto, auto, 16px 16px;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.spotlight-main > * {
+  position: relative;
+  z-index: 1;
 }
 
 .popular-card-main {
@@ -312,8 +332,8 @@ input {
   min-height: 240px;
   padding: 24px;
   background:
-    radial-gradient(circle at 100% 0%, rgba(132, 195, 159, 0.14), transparent 34%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(239, 247, 242, 0.74));
+    radial-gradient(circle at 92% 18%, rgba(255, 255, 255, 0.3), transparent 28%),
+    linear-gradient(125deg, rgba(226, 242, 246, 0.86) 0%, rgba(236, 249, 246, 0.76) 100%);
   color: inherit;
   cursor: pointer;
   text-align: left;
@@ -766,15 +786,15 @@ input {
   min-height: 32px;
   border-radius: 999px;
   padding: 0 12px;
-  background: #e9f2f1;
-  color: var(--green);
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
   font-size: 15px;
   font-weight: 900;
 }
 
 .spotlight-main > strong {
   max-width: 720px;
-  color: #1f2937;
+  color: white;
   font-size: clamp(28px, 3vw, 38px);
   line-height: 1.3;
   word-break: keep-all;
@@ -782,7 +802,7 @@ input {
 
 .spotlight-main > em {
   max-width: 760px;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.86);
   font-size: 17px;
   font-style: normal;
   line-height: 1.7;
@@ -790,7 +810,7 @@ input {
 }
 
 .spotlight-main > small {
-  color: #9b1c31;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 15px;
   font-weight: 900;
 }
@@ -811,8 +831,8 @@ input {
   margin-top: auto;
   border-radius: 999px;
   padding: 0 16px;
-  background: #123972;
-  color: white;
+  background: white;
+  color: #155e75;
   font-size: 14px;
   font-weight: 900;
 }
