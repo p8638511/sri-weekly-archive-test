@@ -591,11 +591,12 @@ function renderSpotlightSideArticle(article, direction, isVisible) {
 
   return `
     <div class="spotlight-side spotlight-side-${direction}">
-      <button class="spotlight-side-card ${theme.className}" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
-        <span>${theme.label}</span>
-        <strong>${article.title}</strong>
+      <button class="spotlight-side-card" type="button" data-article-id="${article.id}" aria-label="${article.title} 상세 보기">
+        <span class="spotlight-side-visual ${theme.className}">
+          <span>${theme.label}</span>
+          <strong>${article.title}</strong>
+        </span>
         <em>${article.summary}</em>
-        <small>${article.volume}호 · ${formatDate(article.date)}</small>
       </button>
       <button class="spotlight-arrow" type="button" data-slide-target="latest" data-slide-direction="${directionValue}" aria-label="${label}">${direction === "prev" ? "‹" : "›"}</button>
     </div>
@@ -615,8 +616,6 @@ function renderSpotlightArticle(article) {
           <strong>${article.title}</strong>
         </span>
         <em>${article.summary}</em>
-        <small>${article.volume}호 · ${formatDate(article.date)}</small>
-        <span class="spotlight-read-more">자세히 보기</span>
       </button>
     </article>
   `;

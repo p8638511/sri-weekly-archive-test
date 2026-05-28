@@ -276,12 +276,12 @@ input {
   overflow: hidden;
   justify-items: stretch;
   align-content: center;
-  gap: 20px;
+  gap: 22px;
   width: min(100%, 680px);
   min-height: 0;
   border: 1px solid rgba(210, 224, 235, 0.8);
   border-radius: 8px;
-  padding: 0 0 28px;
+  padding: 0 0 34px;
   background: white;
   box-shadow: 0 26px 58px rgba(44, 68, 84, 0.14);
   text-align: center;
@@ -292,9 +292,9 @@ input {
   isolation: isolate;
   overflow: hidden;
   display: grid;
-  align-content: center;
-  gap: 34px;
-  min-height: 285px;
+  align-content: start;
+  gap: 28px;
+  min-height: 300px;
   border-radius: 8px 8px 0 0;
   padding: clamp(28px, 4vw, 48px);
   color: white;
@@ -335,21 +335,17 @@ input {
 }
 
 .spotlight-side-card {
-  position: relative;
   overflow: hidden;
   display: grid;
-  gap: 12px;
+  gap: 0;
   width: 100%;
   min-width: 0;
-  border: 0;
+  border: 1px solid rgba(210, 224, 235, 0.72);
   border-radius: 8px;
-  min-height: 240px;
-  padding: 24px;
-  background:
-    radial-gradient(circle at 14% 72%, rgba(255, 255, 255, 0.18), transparent 22%),
-    radial-gradient(circle at 76% 30%, rgba(255, 255, 255, 0.16), transparent 18%),
-    linear-gradient(135deg, #0f766e 0%, #35a887 48%, #a0d9bd 100%);
-  color: white;
+  min-height: 250px;
+  padding: 0;
+  background: white;
+  color: #1d2939;
   cursor: pointer;
   text-align: left;
   box-shadow: 0 18px 42px rgba(25, 42, 64, 0.12);
@@ -359,7 +355,20 @@ input {
     transform 0.18s ease;
 }
 
-.spotlight-side-card::before {
+.spotlight-side-visual {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  min-height: 145px;
+  border-radius: 8px 8px 0 0;
+  padding: 26px;
+  color: white;
+}
+
+.spotlight-side-visual::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -373,7 +382,8 @@ input {
   pointer-events: none;
 }
 
-.spotlight-side-card > * {
+.spotlight-side-card > *,
+.spotlight-side-visual > * {
   position: relative;
   z-index: 1;
 }
@@ -383,17 +393,17 @@ input {
   transform: scale(0.97);
 }
 
-.spotlight-side-card > span {
+.spotlight-side-visual > span {
   color: rgba(255, 255, 255, 0.92);
   font-size: 14px;
   font-weight: 900;
 }
 
-.spotlight-side-card > strong {
+.spotlight-side-visual > strong {
   display: -webkit-box;
   overflow: hidden;
   color: white;
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.35;
   word-break: keep-all;
   -webkit-line-clamp: 2;
@@ -403,12 +413,13 @@ input {
 .spotlight-side-card > em {
   display: -webkit-box;
   overflow: hidden;
-  color: rgba(255, 255, 255, 0.8);
+  padding: 20px 24px 24px;
+  color: #667085;
   font-size: 14px;
   font-style: normal;
-  line-height: 1.5;
+  line-height: 1.55;
   word-break: keep-all;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
@@ -421,7 +432,7 @@ input {
 
 .spotlight-main:hover .spotlight-visual > strong,
 .popular-card-main:hover > strong,
-.spotlight-side-card:hover > strong {
+.spotlight-side-card:hover .spotlight-side-visual > strong {
   text-decoration: underline;
 }
 
@@ -857,19 +868,19 @@ input {
   justify-self: center;
   max-width: 720px;
   color: white;
-  font-size: clamp(30px, 3.2vw, 42px);
-  line-height: 1.24;
+  font-size: clamp(36px, 3.8vw, 50px);
+  line-height: 1.2;
   word-break: keep-all;
 }
 
 .spotlight-main > em {
   justify-self: center;
-  max-width: 600px;
+  max-width: 680px;
   padding: 0 30px;
   color: #667085;
-  font-size: 17px;
+  font-size: 19px;
   font-style: normal;
-  line-height: 1.7;
+  line-height: 1.75;
   word-break: keep-all;
 }
 
@@ -1867,7 +1878,11 @@ input {
   }
 
   .spotlight-side-card {
-    min-height: 240px;
+    min-height: 230px;
+  }
+
+  .spotlight-side-visual {
+    min-height: 130px;
     padding: 22px;
   }
 
@@ -1950,7 +1965,7 @@ input {
 
   .spotlight-main {
     min-height: auto;
-    padding: 26px;
+    padding: 0 0 28px;
   }
 
   .spotlight-card-top {
@@ -1969,13 +1984,13 @@ input {
   }
 
   .spotlight-visual {
-    min-height: 235px;
+    min-height: 230px;
     gap: 24px;
     padding: 26px;
   }
 
   .spotlight-visual > strong {
-    font-size: 28px;
+    font-size: 30px;
   }
 
   .spotlight-main > em {
