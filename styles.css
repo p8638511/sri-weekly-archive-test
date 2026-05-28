@@ -1513,6 +1513,8 @@ input {
 .copyright-panel {
   display: grid;
   gap: 10px;
+  width: min(600px, 100%);
+  margin-top: 18px;
   border: 1px solid rgba(38, 87, 71, 0.16);
   border-radius: 8px;
   padding: 20px 22px;
