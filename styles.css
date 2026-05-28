@@ -127,12 +127,14 @@ input {
   justify-items: center;
   min-height: 500px;
   overflow: hidden;
-  border-radius: 8px;
-  padding: 42px clamp(18px, 4vw, 48px);
+  margin-inline: calc(-1 * clamp(20px, 4vw, 56px));
+  border-radius: 0;
+  padding: 42px clamp(28px, 5vw, 72px);
   background:
-    radial-gradient(circle at 86% 18%, rgba(191, 221, 201, 0.48), transparent 28%),
-    radial-gradient(circle at 14% 78%, rgba(220, 235, 226, 0.62), transparent 24%),
-    linear-gradient(180deg, #fbfcfb 0%, #f7f2ef 100%);
+    radial-gradient(circle at 86% 18%, rgba(130, 185, 151, 0.5), transparent 28%),
+    radial-gradient(circle at 8% 82%, rgba(232, 121, 79, 0.24), transparent 26%),
+    radial-gradient(circle at 50% 108%, rgba(190, 214, 198, 0.5), transparent 30%),
+    linear-gradient(135deg, #fbfcfb 0%, #eef6ef 48%, #f8ede6 100%);
 }
 
 .popular-panel {
@@ -275,13 +277,14 @@ input {
   gap: 16px;
   width: min(100%, 640px);
   min-height: 310px;
-  border: 1px solid rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(172, 196, 184, 0.58);
   border-radius: 8px;
   padding: clamp(30px, 4vw, 52px);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(244, 249, 247, 0.78)),
-    radial-gradient(circle at 95% 100%, rgba(22, 131, 111, 0.14), transparent 30%);
-  box-shadow: 0 20px 45px rgba(25, 42, 64, 0.14);
+    radial-gradient(circle at 100% 0%, rgba(132, 195, 159, 0.18), transparent 30%),
+    radial-gradient(circle at 0% 100%, rgba(232, 121, 79, 0.12), transparent 30%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(236, 246, 240, 0.9));
+  box-shadow: 0 20px 45px rgba(31, 61, 55, 0.15);
   text-align: left;
 }
 
@@ -308,7 +311,9 @@ input {
   border-radius: 8px;
   min-height: 240px;
   padding: 24px;
-  background: rgba(255, 255, 255, 0.72);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(132, 195, 159, 0.14), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(239, 247, 242, 0.74));
   color: inherit;
   cursor: pointer;
   text-align: left;
@@ -785,12 +790,13 @@ input {
 }
 
 .spotlight-main > small {
-  color: #5f6d7a;
+  color: #9b1c31;
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .spotlight-kicker {
+  display: none;
   color: #9b1c31;
   font-size: 14px;
   font-weight: 950;
