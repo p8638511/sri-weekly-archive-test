@@ -453,8 +453,8 @@ function toDriveEmbedUrl(url) {
 }
 
 async function initData() {
-  renderAll();
-  setDataSourceNote("샘플 데이터 표시 중 · Google Sheets 연결 시도 중");
+  renderLoadingState();
+  setDataSourceNote("Google Sheets 데이터 연결 중");
 
   try {
     weeklyIssues = await loadWeeklyIssuesFromSheets();
@@ -465,7 +465,44 @@ async function initData() {
   } catch (error) {
     setDataSourceNote(`샘플 데이터 표시 중 · Google Sheets 연결 실패: ${error.message || "원인 확인 필요"}`);
     console.info("Google Sheets 데이터를 읽지 못해 샘플 데이터로 표시합니다.", error);
+    weeklyIssues = fallbackWeeklyIssues;
+    allArticles = buildAllArticles(weeklyIssues);
+    state.selectedIssueVolume = null;
+    renderAll();
   }
+}
+
+function renderLoadingState() {
+  if (latestSectionTitle) latestSectionTitle.textContent = "최신 발간물";
+  if (latestSlideStatus) latestSlideStatus.textContent = "";
+  if (latestFeatured) {
+    latestFeatured.innerHTML = `
+      <article class="loading-card loading-card-large" aria-live="polite">
+        <span></span>
+        <strong>최신 자료를 불러오고 있습니다</strong>
+        <em>Google Sheets 데이터를 연결하는 중입니다.</em>
+      </article>
+    `;
+  }
+  if (popularFeatured) {
+    popularFeatured.innerHTML = Array.from({ length: 5 })
+      .map(
+        () => `
+          <article class="loading-card">
+            <span></span>
+            <strong></strong>
+            <em></em>
+          </article>
+        `,
+      )
+      .join("");
+  }
+  if (topicFilters) topicFilters.innerHTML = "";
+  if (resultCount) resultCount.textContent = "";
+  if (issueList) {
+    issueList.innerHTML = `<article class="empty-card"><h3>지난호 데이터를 불러오고 있습니다</h3></article>`;
+  }
+  if (pagination) pagination.innerHTML = "";
 }
 
 function renderAll() {
