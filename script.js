@@ -273,6 +273,7 @@ const pdfPreviewOpen = document.querySelector("#pdfPreviewOpen");
 const pdfPreviewDownload = document.querySelector("#pdfPreviewDownload");
 const latestFeatured = document.querySelector("#latestFeatured");
 const popularFeatured = document.querySelector("#popularFeatured");
+const latestSectionTitle = document.querySelector("#latestSectionTitle");
 const latestSlideStatus = document.querySelector("#latestSlideStatus");
 const pagination = document.querySelector("#pagination");
 
@@ -556,6 +557,11 @@ function renderLatestSpotlight(articles) {
   state.latestSlide = normalizedSlide;
   latestSlideStatus.textContent = `${normalizedSlide + 1} / ${totalSlides}`;
 
+  if (latestSectionTitle) {
+    const latestVolume = articles[0]?.volume || weeklyIssues[0]?.volume;
+    latestSectionTitle.textContent = latestVolume ? `최신 발간물(${latestVolume}호)` : "최신 발간물";
+  }
+
   const activeArticle = articles[normalizedSlide];
   if (!activeArticle) {
     latestFeatured.innerHTML = `<article class="empty-card"><h3>최신 발간물이 없습니다</h3></article>`;
@@ -613,7 +619,7 @@ function renderSpotlightArticle(article) {
         <span class="spotlight-visual ${theme.className}">
           <span class="spotlight-card-top">
             <span class="spotlight-topic">${theme.label}</span>
-            <small>${article.volume}호 · ${article.issueCode}</small>
+            <small>${article.volume}호</small>
           </span>
           <strong>${article.title}</strong>
         </span>
@@ -740,7 +746,7 @@ function renderArchiveArticleItem(article, index) {
     <button class="paper-item archive-article-item" type="button" data-article-id="${article.id}">
       <span class="paper-number">${String(index + 1).padStart(2, "0")}</span>
       <span class="archive-article-body">
-        <span class="issue-badge">SRI Weekly ${article.volume}호 · ${article.issueCode} · ${formatDate(article.date)}</span>
+        <span class="issue-badge">SRI Weekly ${article.volume}호 · ${formatDate(article.date)}</span>
         <strong>${article.title}</strong>
         <em>${article.summary}</em>
         <span class="article-tags">${article.tags.slice(0, 6).map((tag) => `<span>${tag}</span>`).join("")}</span>
@@ -800,7 +806,6 @@ function renderCover(issue) {
         <div class="cover-line"></div>
         <img src="./assets/sri-weekly-logo.png" alt="" />
         <span class="cover-volume">No. ${issue.volume}</span>
-        <strong>${issue.issueCode}</strong>
         <small>${formatDate(issue.date)}</small>
       </div>
     </div>
@@ -870,7 +875,7 @@ function openArticle(articleId) {
   const articlePreviewUrl = article.previewPdf || article.pdf;
   const keywordTags = article.tags.map(cleanKeyword).filter(Boolean);
   articleDetail.innerHTML = `
-    <p class="eyebrow">SRI Weekly ${article.volume}호 (${article.issueCode}) | ${formatDate(article.date)}</p>
+    <p class="eyebrow">SRI Weekly ${article.volume}호 | ${formatDate(article.date)}</p>
     <h2>${article.title}</h2>
     <div class="detail-meta">
       ${keywordTags.map((tag) => `<span>#${tag}</span>`).join("")}
@@ -999,7 +1004,7 @@ function getRelatedArticles(article) {
 
 function createTextDownloadUrl(issue, article) {
   const lines = [
-    `SRI Weekly ${issue.volume}호 (${issue.issueCode})`,
+    `SRI Weekly ${issue.volume}호`,
     `${article.type} | ${article.title}`,
     `발행일: ${issue.date}`,
     `작성: ${article.author}`,
