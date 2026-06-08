@@ -293,7 +293,7 @@ function loadSheetRows(sheetName) {
     const timeout = window.setTimeout(() => {
       cleanup();
       reject(new Error(`${sheetName} 시트 응답 시간이 초과되었습니다.`));
-    }, 12000);
+    }, 20000);
 
     function cleanup() {
       window.clearTimeout(timeout);
@@ -454,22 +454,37 @@ function toDriveEmbedUrl(url) {
 
 async function initData() {
   renderLoadingState();
-  setDataSourceNote("Google Sheets 데이터 연결 중");
 
-  try {
-    weeklyIssues = await loadWeeklyIssuesFromSheets();
-    allArticles = buildAllArticles(weeklyIssues);
-    state.selectedIssueVolume = null;
-    setDataSourceNote("Google Sheets 데이터 연결됨");
-    renderAll();
-  } catch (error) {
-    setDataSourceNote(`샘플 데이터 표시 중 · Google Sheets 연결 실패: ${error.message || "원인 확인 필요"}`);
-    console.info("Google Sheets 데이터를 읽지 못해 샘플 데이터로 표시합니다.", error);
-    weeklyIssues = fallbackWeeklyIssues;
-    allArticles = buildAllArticles(weeklyIssues);
-    state.selectedIssueVolume = null;
-    renderAll();
+  const maxRetries = 3;
+  const retryDelayMs = 2000;
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
+    setDataSourceNote(
+      attempt === 1 ? "Google Sheets 데이터 연결 중" : `Google Sheets 재연결 중... (${attempt}/${maxRetries})`,
+    );
+
+    try {
+      weeklyIssues = await loadWeeklyIssuesFromSheets();
+      allArticles = buildAllArticles(weeklyIssues);
+      state.selectedIssueVolume = null;
+      setDataSourceNote("Google Sheets 데이터 연결됨");
+      renderAll();
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries) {
+        await new Promise((resolve) => window.setTimeout(resolve, retryDelayMs));
+      }
+    }
   }
+
+  setDataSourceNote(`샘플 데이터 표시 중 · Google Sheets 연결 실패: ${lastError?.message || "원인 확인 필요"}`);
+  console.info("Google Sheets 데이터를 읽지 못해 샘플 데이터로 표시합니다.", lastError);
+  weeklyIssues = fallbackWeeklyIssues;
+  allArticles = buildAllArticles(weeklyIssues);
+  state.selectedIssueVolume = null;
+  renderAll();
 }
 
 function renderLoadingState() {
